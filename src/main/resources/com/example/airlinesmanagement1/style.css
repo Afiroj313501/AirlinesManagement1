@@ -1,0 +1,108 @@
+/* styles.css */
+
+.sidebar-button {
+    -fx-background-color: #1873f2;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-pref-width: 100px;
+    -fx-cursor: hand;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 4, 0, 0, 2);
+}
+
+.sidebar-button:hover {
+    -fx-background-color: #0055cc;
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
+.dashboard-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2d2d2d;
+}
+
+.footer {
+    -fx-background-color: #eeeeee;
+    -fx-padding: 10 0 10 0;
+    -fx-border-color: #cccccc;
+    -fx-border-width: 1px 0 0 0;
+    -fx-alignment: center;
+}
+
+.footer-label {
+    -fx-text-fill: #555555;
+    -fx-font-size: 12px;
+    -fx-font-style: italic;
+    -fx-font-family: "Segoe UI", sans-serif;
+}
+
+.root {
+    -fx-background-color: #fdfefe;
+    -fx-font-family: "Segoe UI", "Roboto", sans-serif;
+}
+
+.label {
+    -fx-text-fill: #2f3640;
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+}
+
+.text-field,
+.date-picker {
+    -fx-pref-width: 280px;
+    -fx-padding: 10px;
+    -fx-font-size: 14px;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-border-color: #dcdde1;
+    -fx-border-width: 1;
+    -fx-background-color: #ffffff;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.03), 2, 0, 0, 2);
+}
+
+.text-field:focused,
+.date-picker:focused {
+    -fx-border-color: #3498db;
+    -fx-background-color: #fdfefe;
+    -fx-effect: dropshadow(three-pass-box, rgba(52,152,219,0.2), 6, 0, 0, 4);
+}
+
+.button {
+    -fx-background-color: #2980b9;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+    -fx-padding: 10px 24px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 2, 0, 0, 2);
+    -fx-transition: all 0.3s ease;
+}
+
+.button:hover {
+    -fx-background-color: #1c6ea4;
+}
+
+.button:pressed {
+    -fx-background-color: #145a86;
+}
+
+/* Suggestion popup (for address auto-complete) */
+.context-menu {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ced6e0;
+    -fx-border-radius: 6px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 5, 0, 0, 2);
+}
+
+.menu-item {
+    -fx-padding: 8px 14px;
+    -fx-font-size: 13px;
+    -fx-text-fill: #2f3640;
+}
+
+.menu-item:hover {
+    -fx-background-color: #ecf0f1;
+}
