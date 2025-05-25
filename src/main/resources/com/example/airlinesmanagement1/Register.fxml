@@ -35,9 +35,9 @@
         <Button fx:id="registerButton" layoutX="334.0" layoutY="431.0" onAction="#registerUser" prefHeight="26.0" prefWidth="300.0" style="-fx-background-color: #2e73f2;" text="Register" />
         <Button fx:id="loginButton" layoutX="334.0" layoutY="469.0" onAction="#goToLoginPage" prefHeight="26.0" prefWidth="300.0" style="-fx-background-color: #2e73f2;" text="Login" />
 
-        <Label fx:id="messageLabel" layoutX="381.0" layoutY="395.0" prefHeight="18.0" prefWidth="213.0" textFill="#004fff">
+        <Label fx:id="messageLabel" layoutX="389.0" layoutY="396.0" prefHeight="18.0" prefWidth="213.0" textFill="RED">
          <font>
-            <Font name="Arial Black" size="14.0" />
+            <Font name="Californian FB" size="14.0" />
          </font></Label>
       <AnchorPane layoutY="-2.0" prefHeight="600.0" prefWidth="254.0" style="-fx-background-color: #2e73f2;">
          <children>
