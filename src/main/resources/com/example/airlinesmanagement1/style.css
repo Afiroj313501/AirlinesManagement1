@@ -120,3 +120,33 @@
 .custom-alert .content {
     -fx-padding: 10px;
 }
+
+.sidebar-button {
+    -fx-background-color: #5A6FC1;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-pref-width: 160px;
+    -fx-padding: 10 20;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+}
+
+.sidebar-button:hover {
+    -fx-background-color: #7386D5;
+}
+
+.dashboard-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333;
+}
+
+.footer {
+    -fx-background-color: #f4f4f4;
+}
+
+.footer-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #666;
+}
