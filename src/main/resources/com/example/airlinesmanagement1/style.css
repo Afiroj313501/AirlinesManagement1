@@ -106,3 +106,17 @@
 .menu-item:hover {
     -fx-background-color: #ecf0f1;
 }
+
+.custom-alert {
+    -fx-font-size: 14px;
+    -fx-background-color: #f8f9fa;
+}
+
+.custom-alert .header-panel {
+    -fx-background-color: #007bff;
+    -fx-text-fill: white;
+}
+
+.custom-alert .content {
+    -fx-padding: 10px;
+}
