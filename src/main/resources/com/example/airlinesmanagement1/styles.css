@@ -1,0 +1,101 @@
+/* Root styling for the entire application */
+.root {
+    -fx-background-color: #e9ecef; /* Light gray background */
+    -fx-font-family: Arial;
+    -fx-font-size: 12px;
+}
+
+/* Styling for the top label */
+.label {
+    -fx-text-fill: #2c3e50; /* Dark blue text */
+}
+
+/* TitledPane styling */
+.titled-pane > .title {
+    -fx-background-color: #3498db; /* Blue header */
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.titled-pane > .content {
+    -fx-background-color: #f5f6f5; /* Light gray content area */
+}
+
+/* GridPane and padding */
+.grid-pane {
+    -fx-padding: 10px;
+    -fx-hgap: 10px;
+    -fx-vgap: 10px;
+}
+
+/* TextField styling */
+.text-field {
+    -fx-background-color: #e6f0fa; /* Light blue background */
+    -fx-border-color: #3498db;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-padding: 5px;
+}
+
+.text-field:focused {
+    -fx-border-color: #2980b9; /* Darker blue on focus */
+}
+
+/* DatePicker styling */
+.date-picker .text-field {
+    -fx-background-color: #e6f0fa;
+    -fx-border-color: #3498db;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+.date-picker:focused .text-field {
+    -fx-border-color: #2980b9;
+}
+
+/* Button styling */
+.button {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-padding: 5px 10px;
+}
+
+.button:hover {
+    -fx-background-color: #2980b9;
+}
+
+.button:pressed {
+    -fx-background-color: #2471a3;
+}
+
+/* TableView styling */
+.table-view {
+    -fx-background-color: #f5f6f5;
+    -fx-border-color: #3498db;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+.table-view .column-header {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+}
+
+.table-view .table-cell {
+    -fx-alignment: CENTER;
+}
+
+.table-view .table-row-cell:empty {
+    -fx-background-color: #f5f6f5;
+}
+
+.table-view .table-row-cell {
+    -fx-border-color: #ddd;
+}
+
+/* Placeholder text for empty tables */
+.table-view .label {
+    -fx-text-fill: #7f8c8d; /* Gray text for "No content" */
+}
