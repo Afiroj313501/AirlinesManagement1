@@ -7,7 +7,7 @@ import java.sql.SQLException;
 public class DatabaseConnection {
 
     // Replace with your actual database name
-    private static final String DATABASE_URL = "jdbc:mysql://localhost:3306/airlines_management";
+    private static final String DATABASE_URL = "jdbc:mysql://localhost:3306/airlines_management1";
     private static final String DATABASE_USERNAME = "root";  // Default for XAMPP
     private static final String DATABASE_PASSWORD = "";      // Default for XAMPP (empty)
 

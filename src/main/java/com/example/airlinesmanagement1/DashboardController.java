@@ -32,9 +32,21 @@ public class DashboardController implements Initializable {
     @FXML
     private HBox footerBox;
 
+    @FXML
+    private javafx.scene.control.Button ticketButton;
+
+    @FXML
+    private javafx.scene.control.Button adminPanelButton; // New button for admin panel
+
+    private Scene currentScene;
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // Load dashboard image
+        currentScene = welcomeLabel.getScene();
+        if (currentScene == null) {
+            System.err.println("Warning: currentScene is null during initialization. Check application setup.");
+        }
+
         if (dashboardImageView != null) {
             try {
                 dashboardImageView.setImage(
@@ -45,7 +57,6 @@ public class DashboardController implements Initializable {
             }
         }
 
-        // Apply footer animations
         if (footerBox != null) {
             FadeTransition ft = new FadeTransition(Duration.millis(1000), footerBox);
             ft.setFromValue(0);
@@ -57,9 +68,15 @@ public class DashboardController implements Initializable {
             tt.setToY(0);
             tt.play();
         }
+
+        if (ticketButton == null) {
+            System.err.println("Warning: ticketButton is null. Check Dashboard.fxml for fx:id='ticketButton'.");
+        }
+        if (adminPanelButton == null) {
+            System.err.println("Warning: adminPanelButton is null. Check Dashboard.fxml for fx:id='adminPanelButton'.");
+        }
     }
 
-    // Utility method to load new scene by FXML file name (for non-popup navigation)
     private void loadScene(ActionEvent event, String fxmlFile, String title) {
         try {
             URL fxmlUrl = getClass().getResource("/com/example/airlinesmanagement1/" + fxmlFile);
@@ -73,13 +90,15 @@ public class DashboardController implements Initializable {
             stage.setTitle(title);
             stage.show();
             System.out.println("Successfully loaded " + fxmlFile);
+            if (currentScene == null) {
+                currentScene = ((Node) event.getSource()).getScene();
+            }
         } catch (IOException e) {
             System.err.println("Error loading " + fxmlFile + ": " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    // Utility method to open a popup window
     private void openPopup(ActionEvent event, String fxmlFile, String title) {
         try {
             URL fxmlUrl = getClass().getResource("/com/example/airlinesmanagement1/" + fxmlFile);
@@ -89,11 +108,11 @@ public class DashboardController implements Initializable {
             FXMLLoader loader = new FXMLLoader(fxmlUrl);
             Scene scene = new Scene(loader.load());
             Stage popupStage = new Stage();
-            popupStage.initModality(Modality.APPLICATION_MODAL); // Makes the popup modal
-            popupStage.initOwner(((Node) event.getSource()).getScene().getWindow()); // Ties popup to parent window
+            popupStage.initModality(Modality.APPLICATION_MODAL);
+            popupStage.initOwner(((Node) event.getSource()).getScene().getWindow());
             popupStage.setScene(scene);
             popupStage.setTitle(title);
-            popupStage.showAndWait(); // Show and wait until popup is closed
+            popupStage.showAndWait();
             System.out.println("Successfully opened popup: " + fxmlFile);
         } catch (IOException e) {
             System.err.println("Error opening popup " + fxmlFile + ": " + e.getMessage());
@@ -115,14 +134,31 @@ public class DashboardController implements Initializable {
 
     @FXML
     private void goToManageBookings(ActionEvent event) {
-        System.out.println("Opening Book Flight popup...");
-        openPopup(event, "FlightBook.fxml", "Book Flight");
+        System.out.println("Opening Manage Bookings popup...");
+        openPopup(event, "FlightBook.fxml", "Manage Bookings");
+        System.out.println("Manage Bookings action completed.");
     }
 
     @FXML
     private void goToBookingHistory(ActionEvent event) {
         System.out.println("Navigating to Booking History...");
-        loadScene(event, "BookingHistory.fxml", "Booking History");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/airlinesmanagement1/TicketView.fxml"));
+            Scene scene = new Scene(loader.load());
+            TicketController controller = loader.getController();
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            if (currentScene == null) {
+                System.err.println("Error: currentScene is null in goToBookingHistory. Using current scene as fallback.");
+                currentScene = ((Node) event.getSource()).getScene();
+            }
+            controller.setPrimaryStage(stage, currentScene);
+            stage.setScene(scene);
+            stage.setTitle("My Tickets");
+            stage.show();
+        } catch (IOException e) {
+            System.err.println("Error loading TicketView.fxml: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -135,5 +171,11 @@ public class DashboardController implements Initializable {
     private void goToSettings(ActionEvent event) {
         System.out.println("Navigating to Settings...");
         loadScene(event, "Settings.fxml", "Settings");
+    }
+
+    @FXML
+    private void goToAdminPanel(ActionEvent event) {
+        System.out.println("Navigating to Admin Panel...");
+        loadScene(event, "AdminPanel.fxml", "Admin Panel");
     }
 }

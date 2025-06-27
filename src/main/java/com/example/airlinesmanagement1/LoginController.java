@@ -83,6 +83,7 @@ public class LoginController implements Initializable {
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next() && rs.getInt(1) == 1) {
                     loginMessageLabel.setText("Congratulations! Login successful.");
+                    Session.getInstance().setUsername(usernameField.getText()); // Use Session instead of CurrentUser
                     loadDashboard(event);
                 } else {
                     loginMessageLabel.setText("Invalid login. Please try again.");

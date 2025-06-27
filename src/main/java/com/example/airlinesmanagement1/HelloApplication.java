@@ -12,7 +12,8 @@ public class HelloApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         // Start by showing the Login page
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("Admin_panel.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("Login.fxml"));
+        //FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("Admin_panel.fxml"));
         stage.initStyle(StageStyle.UNDECORATED);
         Scene scene = new Scene(fxmlLoader.load(), 700, 500);
         stage.setTitle("Login Page");

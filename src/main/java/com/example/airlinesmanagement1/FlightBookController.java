@@ -3,11 +3,15 @@ package com.example.airlinesmanagement1;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Side;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -83,7 +87,7 @@ public class FlightBookController {
     }
 
     @FXML
-    private void handleSearchFlight() {
+    private void handleSearchFlight(ActionEvent event) {
         String from = fromField.getText().trim();
         String to = toField.getText().trim();
         LocalDate date = flightDatePicker.getValue();
@@ -93,49 +97,45 @@ public class FlightBookController {
             return;
         }
 
-        new Thread(() -> {
-            StringBuilder results = new StringBuilder();
-            boolean hasResults = false;
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(
+                     "SELECT flight_number FROM flights WHERE from_city = ? AND to_city = ? AND flight_date = ?")) {
+            stmt.setString(1, from);
+            stmt.setString(2, to);
+            stmt.setString(3, date.toString());
+            ResultSet rs = stmt.executeQuery();
 
-            try (Connection conn = getConnection();
-                 PreparedStatement stmt = conn.prepareStatement(
-                         "SELECT flight_number, from_city, to_city, flight_date, price, departure_time " +
-                                 "FROM flights WHERE from_city = ? AND to_city = ? AND flight_date = ?")) {
-                stmt.setString(1, from);
-                stmt.setString(2, to);
-                stmt.setString(3, date.toString());
-                ResultSet rs = stmt.executeQuery();
-
-                while (rs.next()) {
-                    hasResults = true;
-                    String flightNumber = rs.getString("flight_number");
-                    String fromCity = rs.getString("from_city");
-                    String toCity = rs.getString("to_city");
-                    String flightDate = rs.getString("flight_date");
-                    double price = rs.getDouble("price");
-                    String departureTime = rs.getString("departure_time");
-
-                    results.append(String.format("Flight: %s, From: %s, To: %s, Date: %s, Price: $%.2f, Departure: %s\n",
-                            flightNumber, fromCity, toCity, flightDate, price, departureTime));
-                }
-
-            } catch (SQLException e) {
-                Platform.runLater(() -> showAlert(Alert.AlertType.ERROR, "Database Error", "Error fetching flights: " + e.getMessage()));
-                return;
+            if (rs.next()) {
+                // Flight found, proceed to seat selection
+                openSeatSelectionPage(event, from, to, date.toString());
+            } else {
+                showAlert(Alert.AlertType.INFORMATION, "No Flights Found", "No flights available for the selected criteria.");
             }
 
-            final String finalResults = results.toString();
-            final boolean finalHasResults = hasResults;
+        } catch (SQLException e) {
+            showAlert(Alert.AlertType.ERROR, "Database Error", "Error fetching flights: " + e.getMessage());
+        }
+    }
 
-            Platform.runLater(() -> {
-                if (finalHasResults) {
-                    showAlert(Alert.AlertType.INFORMATION, "Flight Results", finalResults);
-                } else {
-                    showAlert(Alert.AlertType.INFORMATION, "No Flights Found", "No flights available for the selected criteria.");
-                }
-            });
+    private void openSeatSelectionPage(ActionEvent event, String from, String to, String date) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/airlinesmanagement1/SeatSelection.fxml"));
+            Parent root = loader.load();
 
-        }).start();
+            SeatSelectionController controller = loader.getController();
+            controller.setFlightInfo(from, to, date);
+            controller.setCurrentUsername(Session.getInstance().getUsername()); // This should now return "baba_yaga"
+
+            Stage stage = new Stage();
+            stage.setTitle("Select Your Seat");
+            stage.setScene(new Scene(root));
+            stage.show();
+
+            ((Stage) ((Node) event.getSource()).getScene().getWindow()).close();
+        } catch (IOException e) {
+            showAlert(Alert.AlertType.ERROR, "FXML Load Error", "Could not load seat selection page.");
+            e.printStackTrace();
+        }
     }
 
     private void showAlert(Alert.AlertType type, String title, String content) {

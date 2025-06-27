@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.example.airlinesmanagement1.AdminPanelController"
+            prefWidth="900" prefHeight="600">
+
+    <top>
+        <Label text="Admin Panel - Manage Cities, Flights, and Support Chat"
+               style="-fx-font-size: 20px; -fx-font-weight: bold;"
+               BorderPane.alignment="CENTER"/>
+    </top>
+
+    <center>
+        <GridPane hgap="20" vgap="20">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+
+            <!-- City Management Section -->
+            <TitledPane text="Manage Cities" expanded="true" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                <content>
+                    <GridPane hgap="10" vgap="10">
+                        <padding>
+                            <Insets top="10" right="10" bottom="10" left="10"/>
+                        </padding>
+
+                        <TextField fx:id="cityNameField" promptText="Enter city name" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                        <Button text="Add City" onAction="#handleAddCity" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                        <TableView fx:id="cityTable" prefHeight="150" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="2">
+                            <columns>
+                                <TableColumn fx:id="cityNameColumn" text="City Name" prefWidth="300"/>
+                            </columns>
+                        </TableView>
+                    </GridPane>
+                </content>
+            </TitledPane>
+
+            <!-- Flight Management Section -->
+            <TitledPane text="Manage Flights" expanded="true" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                <content>
+                    <GridPane hgap="10" vgap="10">
+                        <padding>
+                            <Insets top="10" right="10" bottom="10" left="10"/>
+                        </padding>
+
+                        <Label text="Flight No:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <TextField fx:id="flightNumberField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                        <Label text="From:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <TextField fx:id="fromCityField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                        <Label text="To:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <TextField fx:id="toCityField" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                        <Label text="Date:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <DatePicker fx:id="flightDatePicker" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+                        <Label text="Time:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                        <TextField fx:id="departureTimeField" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+                        <Label text="Price:" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+                        <TextField fx:id="priceField" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+
+                        <Button text="Add Flight" onAction="#handleAddFlight" GridPane.rowIndex="6" GridPane.columnIndex="0" GridPane.columnSpan="2" maxWidth="Infinity"/>
+
+                        <TableView fx:id="flightTable" prefHeight="200" GridPane.rowIndex="7" GridPane.columnIndex="0" GridPane.columnSpan="2">
+                            <columns>
+                                <TableColumn fx:id="flightNumberColumn" text="Flight No" prefWidth="100"/>
+                                <TableColumn fx:id="fromCityColumn" text="From" prefWidth="100"/>
+                                <TableColumn fx:id="toCityColumn" text="To" prefWidth="100"/>
+                                <TableColumn fx:id="flightDateColumn" text="Date" prefWidth="100"/>
+                                <TableColumn fx:id="departureTimeColumn" text="Time" prefWidth="100"/>
+                                <TableColumn fx:id="priceColumn" text="Price" prefWidth="100"/>
+                            </columns>
+                        </TableView>
+                    </GridPane>
+                </content>
+            </TitledPane>
+        </GridPane>
+    </center>
+
+    <bottom>
+        <TitledPane text="Support Chat" expanded="true">
+            <content>
+                <VBox spacing="10">
+                    <padding>
+                        <Insets top="10" right="10" bottom="10" left="10"/>
+                    </padding>
+                    <TextArea fx:id="chatArea" editable="false" prefHeight="150" prefWidth="860" wrapText="true"/>
+                    <HBox spacing="10" alignment="CENTER">
+                        <TextField fx:id="messageField" prefWidth="760" promptText="Type your response..."/>
+                        <Button fx:id="sendButton" text="Send" onAction="#sendMessage"/>
+                    </HBox>
+                </VBox>
+            </content>
+        </TitledPane>
+    </bottom>
+</BorderPane>
