@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="204.0" prefWidth="528.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.airlinesmanagement1.ReceiptController">
+    <children>
+        <!-- Ticket Info Area -->
+        <AnchorPane layoutX="149.0" prefHeight="222.0" prefWidth="373.0" style="-fx-border-style: dotted; -fx-background-color: #FFFCF9; -fx-border-width: 0 4 0 0; -fx-background-radius: 0 12 12 0;">
+            <children>
+                <VBox layoutX="14" layoutY="14" spacing="6">
+                    <Label fx:id="titleLabel" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #ff7e5f;" text="Flight Number" />
+
+                    <HBox spacing="24">
+                        <VBox spacing="4">
+                            <Label style="-fx-font-size: 11px; -fx-text-fill: #bb6f56;" text="DATE:" />
+                            <Label fx:id="dateLabel" style="-fx-font-size: 14px; -fx-text-fill: #663c2f;" text="Date" />
+                        </VBox>
+                        <VBox spacing="4">
+                            <Label style="-fx-font-size: 11px; -fx-text-fill: #bb6f56;" text="TIME:" />
+                            <Label fx:id="timeLabel" style="-fx-font-size: 14px; -fx-text-fill: #663c2f;" text="Time" />
+                        </VBox>
+                        <VBox spacing="4">
+                            <Label style="-fx-font-size: 11px; -fx-text-fill: #bb6f56;" text="PRICE:" />
+                            <HBox>
+                                <Label fx:id="priceLabel" style="-fx-font-size: 14px; -fx-text-fill: #ff7e5f; -fx-font-weight: bold;" text="400 BDT" />
+                            </HBox>
+                        </VBox>
+                    </HBox>
+
+                    <HBox spacing="24">
+                        <VBox spacing="4">
+                            <Label style="-fx-font-size: 11px; -fx-text-fill: #bb6f56;" text="CLASS" />
+                            <Label fx:id="hallLabel" style="-fx-font-size: 14px; -fx-text-fill: #663c2f;" text="Class" />
+                        </VBox>
+                        <VBox spacing="4">
+                            <Label style="-fx-font-size: 11px; -fx-text-fill: #bb6f56;" text="ROW" />
+                            <Label fx:id="rowLabel" style="-fx-font-size: 14px; -fx-text-fill: #663c2f;" text="Row" />
+                        </VBox>
+                        <VBox spacing="4">
+                            <Label style="-fx-font-size: 11px; -fx-text-fill: #bb6f56;" text="SEAT" />
+                            <Label fx:id="seatLabel" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #663c2f;" text="Seat" />
+                        </VBox>
+                    </HBox>
+
+                    <Label fx:id="classLabel" style="-fx-font-size: 13px; -fx-text-fill: #663c2f;" text="Passenger Info" />
+                    <Label fx:id="locationLabel" style="-fx-font-size: 11px; -fx-text-fill: #663c2f;" text="Location" />
+                </VBox>
+            </children>
+        </AnchorPane>
+
+        <Button layoutX="149.0" layoutY="230.0" text="Generate PDF Ticket" onAction="#generatePdfTicket" />
+    </children>
+</AnchorPane>
