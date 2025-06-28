@@ -177,8 +177,8 @@ public class DashboardController implements Initializable {
 
     @FXML
     private void goToSupport(ActionEvent event) {
-        System.out.println("Navigating to Support...");
-        loadScene(event, "Support.fxml", "Support");
+        System.out.println("Opening Support popup...");
+        openPopup(event, "Support.fxml", "Customer Support Chat");
     }
 
     @FXML
