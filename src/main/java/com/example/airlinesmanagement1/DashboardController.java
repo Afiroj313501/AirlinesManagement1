@@ -122,11 +122,18 @@ public class DashboardController implements Initializable {
             FXMLLoader loader = new FXMLLoader(fxmlUrl);
             Scene scene = new Scene(loader.load());
             Stage popupStage = new Stage();
-            popupStage.initModality(Modality.APPLICATION_MODAL);
+            
+            // Make support popup non-modal to prevent blocking admin panel
+            if (fxmlFile.equals("Support.fxml")) {
+                popupStage.initModality(Modality.NONE); // Non-modal for support
+            } else {
+                popupStage.initModality(Modality.APPLICATION_MODAL); // Modal for other popups
+            }
+            
             popupStage.initOwner(((Node) event.getSource()).getScene().getWindow());
             popupStage.setScene(scene);
             popupStage.setTitle(title);
-            popupStage.showAndWait();
+            popupStage.show(); // Use show() instead of showAndWait()
             System.out.println("Successfully opened popup: " + fxmlFile);
         } catch (IOException e) {
             System.err.println("Error opening popup " + fxmlFile + ": " + e.getMessage());
@@ -151,6 +158,13 @@ public class DashboardController implements Initializable {
         System.out.println("Opening Manage Bookings popup...");
         openPopup(event, "FlightBook.fxml", "Manage Bookings");
         System.out.println("Manage Bookings action completed.");
+    }
+
+    @FXML
+    private void goToManageFlight(ActionEvent event) {
+        System.out.println("Opening Cancel Ticket popup...");
+        openPopup(event, "CancelTicket.fxml", "Cancel Ticket");
+        System.out.println("Cancel Ticket action completed.");
     }
 
     @FXML
@@ -183,7 +197,7 @@ public class DashboardController implements Initializable {
 
     @FXML
     private void goToSettings(ActionEvent event) {
-        System.out.println("Navigating to Settings...");
-        loadScene(event, "Settings.fxml", "Settings");
+        System.out.println("Opening Rating and Feedback...");
+        openPopup(event, "Rating.fxml", "Rate Your Experience");
     }
 }

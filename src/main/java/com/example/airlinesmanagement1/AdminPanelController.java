@@ -66,6 +66,9 @@ public class AdminPanelController {
         departureTimeColumn.setCellValueFactory(new PropertyValueFactory<>("departureTime"));
         priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
 
+        // Setup date validation for flight date picker
+        setupDateValidation();
+
         // Load initial data
         loadCitiesFromDatabase();
         loadFlightsFromDatabase();
@@ -78,59 +81,94 @@ public class AdminPanelController {
         initializeChat();
     }
 
+    private void setupDateValidation() {
+        // Set minimum date to today to prevent booking past dates
+        flightDatePicker.setDayCellFactory(picker -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate date, boolean empty) {
+                super.updateItem(date, empty);
+                if (date != null && date.isBefore(LocalDate.now())) {
+                    setDisable(true);
+                    setStyle("-fx-background-color: #cccccc; -fx-text-fill: #666666;");
+                }
+            }
+        });
+        
+        // Set the minimum date
+        flightDatePicker.setValue(LocalDate.now());
+    }
+
     private void initializeChat() {
         try {
-            socket = new Socket("localhost", 5000);
+            socket = new Socket("localhost", 5001);
             out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
             // Handle name submission loop
             new Thread(() -> {
                 try {
-                    String serverResponse;
-                    while ((serverResponse = in.readLine()) != null) {
-                        System.out.println("Admin received: " + serverResponse); // Debug log
-                        if (serverResponse.equals("SUBMITNAME")) {
-                            System.out.println("Submitting name: Admin");
-                            out.println("Admin");
-                        } else if (serverResponse.startsWith("NAMEACCEPTED")) {
-                            Platform.runLater(() -> {
-                                messageList.getItems().add("Connected as Admin");
-                                System.out.println("UI updated with: Connected as Admin"); // Confirm UI update
-                            });
-                        } else if (serverResponse.startsWith("PRIVATE")) {
-                            String message = serverResponse.substring(8); // Remove "PRIVATE " prefix
-                            Platform.runLater(() -> {
-                                messageList.getItems().add(message);
-                                System.out.println("UI updated with: " + message); // Confirm UI update
-                            });
-                        } else if (serverResponse.startsWith("MESSAGE")) {
-                            String message = serverResponse.substring(8); // Remove "MESSAGE " prefix
-                            Platform.runLater(() -> {
-                                messageList.getItems().add(message);
-                                System.out.println("UI updated with: " + message); // Confirm UI update
-                            });
-                        } else if (serverResponse.equals("NAMETAKEN")) {
-                            System.out.println("Admin name taken, trying a new name");
-                            out.println("Admin" + new java.util.Random().nextInt(100)); // Try a unique name
-                        }
-                    }
+                    receiveMessages();
                 } catch (IOException e) {
-                    Platform.runLater(() -> showAlert(Alert.AlertType.ERROR, "Chat Error", "Connection lost: " + e.getMessage()));
+                    System.err.println("Admin chat connection error: " + e.getMessage());
+                    // Don't show alert for connection errors to avoid blocking the UI
+                } catch (Exception e) {
+                    System.err.println("Admin chat unexpected error: " + e.getMessage());
                 }
             }).start();
         } catch (IOException e) {
-            Platform.runLater(() -> showAlert(Alert.AlertType.ERROR, "Chat Error", "Failed to connect to server: " + e.getMessage()));
+            System.err.println("Admin failed to connect to chat server: " + e.getMessage());
+            // Don't show alert to avoid blocking the UI
+        }
+    }
+
+    private void receiveMessages() throws IOException {
+        String message;
+        while ((message = in.readLine()) != null) {
+            System.out.println("Admin received: " + message); // Debug log
+            if (message.equals("SUBMITNAME")) {
+                System.out.println("Submitting name: Admin");
+                out.println("Admin");
+            } else if (message.startsWith("NAMEACCEPTED")) {
+                Platform.runLater(() -> {
+                    messageList.getItems().add("Connected as Admin");
+                    System.out.println("UI updated with: Connected as Admin"); // Confirm UI update
+                });
+                break;
+            } else if (message.equals("NAMETAKEN")) {
+                System.out.println("Admin name taken, this shouldn't happen");
+                return;
+            }
+        }
+
+        // Now listen for chat messages
+        while ((message = in.readLine()) != null) {
+            System.out.println("Admin received message: " + message);
+            if (message.startsWith("MESSAGE")) {
+                String finalMessage = message.substring(8);
+                Platform.runLater(() -> {
+                    messageList.getItems().add(finalMessage);
+                    messageList.scrollTo(messageList.getItems().size() - 1);
+                });
+            } else if (message.startsWith("PRIVATE")) {
+                String finalMessage = message.substring(8);
+                Platform.runLater(() -> {
+                    messageList.getItems().add("[PRIVATE] " + finalMessage);
+                    messageList.scrollTo(messageList.getItems().size() - 1);
+                });
+            }
         }
     }
 
     @FXML
     private void handleSendMessage() {
         String message = messageInput.getText().trim();
-        if (!message.isEmpty()) {
-            System.out.println("Admin sending: " + message); // Debug log
-            out.println("/msg " + "User1" + " " + message); // Send private message to User1
-            messageInput.clear();
+        if (!message.isEmpty() && out != null) {
+            try {
+                out.println(message);
+                messageInput.clear();
+            } catch (Exception e) {
+                System.err.println("Error sending message: " + e.getMessage());
+            }
         }
     }
 
@@ -164,6 +202,12 @@ public class AdminPanelController {
 
         if (flightNumber.isEmpty() || fromCity.isEmpty() || toCity.isEmpty() || flightDate == null || departureTime.isEmpty() || priceText.isEmpty()) {
             showAlert(Alert.AlertType.WARNING, "Validation Error", "Please fill all flight details.");
+            return;
+        }
+
+        // Check if the selected date is in the past
+        if (flightDate.isBefore(LocalDate.now())) {
+            showAlert(Alert.AlertType.WARNING, "Invalid Date", "Cannot add flights for past dates. Please select today or a future date.");
             return;
         }
 
@@ -241,5 +285,22 @@ public class AdminPanelController {
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+    
+    // Cleanup method to close chat connection
+    public void cleanup() {
+        try {
+            if (in != null) in.close();
+            if (out != null) out.close();
+            if (socket != null) socket.close();
+        } catch (IOException e) {
+            System.err.println("Error closing admin chat connection: " + e.getMessage());
+        }
+    }
+    
+    // Method to handle window closing
+    @FXML
+    private void handleWindowClose() {
+        cleanup();
     }
 }

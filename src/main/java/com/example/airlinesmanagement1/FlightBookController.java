@@ -35,6 +35,21 @@ public class FlightBookController {
     public void initialize() {
         fromField.setOnKeyReleased(e -> showSuggestions(fromField, fromSuggestions));
         toField.setOnKeyReleased(e -> showSuggestions(toField, toSuggestions));
+        
+        // Set minimum date to today to prevent booking past dates
+        flightDatePicker.setDayCellFactory(picker -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate date, boolean empty) {
+                super.updateItem(date, empty);
+                if (date != null && date.isBefore(LocalDate.now())) {
+                    setDisable(true);
+                    setStyle("-fx-background-color: #cccccc; -fx-text-fill: #666666;");
+                }
+            }
+        });
+        
+        // Set the minimum date
+        flightDatePicker.setValue(LocalDate.now());
     }
 
     private Connection getConnection() throws SQLException {
@@ -94,6 +109,12 @@ public class FlightBookController {
 
         if (from.isEmpty() || to.isEmpty() || date == null) {
             showAlert(Alert.AlertType.WARNING, "Incomplete Input", "Please fill all fields to search flights.");
+            return;
+        }
+
+        // Check if the selected date is in the past
+        if (date.isBefore(LocalDate.now())) {
+            showAlert(Alert.AlertType.WARNING, "Invalid Date", "Cannot book flights for past dates. Please select today or a future date.");
             return;
         }
 

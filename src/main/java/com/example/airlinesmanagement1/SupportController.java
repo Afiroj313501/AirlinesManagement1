@@ -43,11 +43,12 @@ public class SupportController {
 
     private void connectToServer() {
         try {
-            socket = new Socket("localhost", 5000);
+            socket = new Socket("localhost", 5001);
             out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out.println(clientName);
         } catch (IOException e) {
+            System.err.println("Support failed to connect to chat server: " + e.getMessage());
             Platform.runLater(() -> chatArea.appendText("Error connecting to server: " + e.getMessage() + "\n"));
         }
     }
@@ -63,10 +64,16 @@ public class SupportController {
                 } else if (message.startsWith("MESSAGE")) {
                     String finalMessage = message.substring(8);
                     Platform.runLater(() -> chatArea.appendText(finalMessage + "\n"));
+                } else if (message.startsWith("PRIVATE")) {
+                    String finalMessage = message.substring(8);
+                    Platform.runLater(() -> chatArea.appendText("[Admin] " + finalMessage + "\n"));
                 }
             }
         } catch (IOException e) {
+            System.err.println("Support chat connection error: " + e.getMessage());
             Platform.runLater(() -> chatArea.appendText("Connection lost: " + e.getMessage() + "\n"));
+        } catch (Exception e) {
+            System.err.println("Support chat unexpected error: " + e.getMessage());
         } finally {
             closeConnection();
         }
@@ -75,9 +82,13 @@ public class SupportController {
     @FXML
     private void sendMessage() {
         String message = messageField.getText().trim();
-        if (!message.isEmpty()) {
-            out.println(message);
-            messageField.clear();
+        if (!message.isEmpty() && out != null) {
+            try {
+                out.println(message);
+                messageField.clear();
+            } catch (Exception e) {
+                System.err.println("Error sending support message: " + e.getMessage());
+            }
         }
     }
 
@@ -115,5 +126,11 @@ public class SupportController {
     public void setPreviousScene(Scene scene) {
         this.previousScene = scene;
         System.out.println("Previous scene set to: " + (scene != null ? scene.getRoot().getClass().getSimpleName() : "null"));
+    }
+
+    // Method to handle window closing
+    @FXML
+    private void handleWindowClose() {
+        shutdown();
     }
 }

@@ -262,3 +262,387 @@
 #sendButton:pressed {
     -fx-background-color: linear-gradient(to right, #e84118, #ff4757); /* Even darker red */
 }
+
+
+/* Login Page Specific Styles */
+#brandingImageView {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 5);
+}
+
+#lockImageView {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 5, 0, 0, 2);
+}
+
+.login-center-pane {
+    -fx-background-color: linear-gradient(to bottom right, #ff6b6b, #4ecdc4, #45b7d1); /* Vibrant gradient: red to teal to light blue */
+    -fx-background-radius: 15px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);
+}
+
+.login-right-pane {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 15px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);
+}
+
+.form-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #ffffff; /* White for contrast with gradient */
+    -fx-font-weight: 600;
+    -fx-padding: 5px 0;
+}
+
+.login-text-field {
+    -fx-pref-width: 225px;
+    -fx-pref-height: 40px;
+    -fx-padding: 10px;
+    -fx-font-size: 14px;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-border-color: #dcdde1; /* Light gray */
+    -fx-border-width: 1;
+    -fx-background-color: #ffffff;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 3, 0, 0, 3);
+}
+
+.login-text-field:focused {
+    -fx-border-color: #ff9ff3; /* Bright pink for focus */
+    -fx-background-color: #f9f9f9; /* Light background */
+    -fx-effect: dropshadow(three-pass-box, rgba(255,159,243,0.3), 6, 0, 0, 4);
+    -fx-transition: all 0.2s ease;
+}
+
+.login-button {
+    -fx-pref-width: 225px;
+    -fx-pref-height: 40px;
+    -fx-background-color: linear-gradient(to right, #ff6b6b, #ff8787); /* Red gradient */
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 5, 0, 0, 3);
+    -fx-transition: all 0.3s ease;
+}
+
+.login-button:hover {
+    -fx-background-color: linear-gradient(to right, #ff4757, #ff6b6b); /* Darker red */
+}
+
+.login-button:pressed {
+    -fx-background-color: linear-gradient(to right, #e84118, #ff4757); /* Even darker */
+}
+
+.register-button {
+    -fx-pref-width: 225px;
+    -fx-pref-height: 40px;
+    -fx-background-color: linear-gradient(to right, #00d2d3, #4ecdc4); /* Teal gradient */
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 5, 0, 0, 3);
+    -fx-transition: all 0.3s ease;
+}
+
+.register-button:hover {
+    -fx-background-color: linear-gradient(to right, #00a8a9, #00d2d3); /* Darker teal */
+}
+
+.register-button:pressed {
+    -fx-background-color: linear-gradient(to right, #008b8b, #00a8a9); /* Even darker */
+}
+
+.login-message {
+    -fx-font-size: 12px;
+    -fx-text-fill: #e74c3c; /* Red for errors */
+    -fx-padding: 5px 0;
+}
+
+/* Login Page Specific Styles */
+#brandingImageView {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 5);
+}
+
+#lockImageView {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 5, 0, 0, 2);
+}
+
+.login-center-pane {
+    -fx-background-color: linear-gradient(to bottom right, #2c3e50, #3498db); /* Professional gradient: dark blue to light blue */
+    -fx-background-radius: 15px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);
+}
+
+.login-right-pane {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 15px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);
+}
+
+.form-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #34495e; /* Dark gray-blue for contrast */
+    -fx-font-weight: 600;
+    -fx-padding: 5px 0;
+}
+
+.login-text-field {
+    -fx-pref-width: 225px;
+    -fx-pref-height: 40px;
+    -fx-padding: 10px;
+    -fx-font-size: 14px;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-border-color: #bdc3c7; /* Light gray */
+    -fx-border-width: 1;
+    -fx-background-color: #ffffff;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 3, 0, 0, 3);
+}
+
+.login-text-field:focused {
+    -fx-border-color: #3498db; /* Professional blue focus */
+    -fx-background-color: #ecf0f1; /* Light gray background */
+    -fx-effect: dropshadow(three-pass-box, rgba(52,152,219,0.3), 6, 0, 0, 4);
+    -fx-transition: all 0.2s ease;
+}
+
+.login-button {
+    -fx-pref-width: 225px;
+    -fx-pref-height: 40px;
+    -fx-background-color: linear-gradient(to right, #2ecc71, #27ae60); /* Green gradient */
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 5, 0, 0, 3);
+    -fx-transition: all 0.3s ease;
+}
+
+.login-button:hover {
+    -fx-background-color: linear-gradient(to right, #27ae60, #219653); /* Darker green */
+}
+
+.login-button:pressed {
+    -fx-background-color: linear-gradient(to right, #1e8449, #27ae60); /* Even darker */
+}
+
+.register-button {
+    -fx-pref-width: 225px;
+    -fx-pref-height: 40px;
+    -fx-background-color: linear-gradient(to right, #3498db, #2980b9); /* Blue gradient */
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 5, 0, 0, 3);
+    -fx-transition: all 0.3s ease;
+}
+
+.register-button:hover {
+    -fx-background-color: linear-gradient(to right, #2980b9, #1c6ea4); /* Darker blue */
+}
+
+.register-button:pressed {
+    -fx-background-color: linear-gradient(to right, #1c6ea4, #145a86); /* Even darker */
+}
+
+.login-message {
+    -fx-font-size: 12px;
+    -fx-text-fill: #e74c3c; /* Red for errors */
+    -fx-padding: 5px 0;
+}
+
+/* Payment Interface Specific Styles */
+.payment-container {
+    -fx-background-color: linear-gradient(to bottom, #f8f9fa, #e9ecef);
+    -fx-padding: 20px;
+}
+
+.payment-card {
+    -fx-background-color: white;
+    -fx-background-radius: 10px;
+    -fx-padding: 15px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 3);
+    -fx-border-radius: 10px;
+    -fx-border-color: #e9ecef;
+    -fx-border-width: 1px;
+}
+
+.payment-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+    -fx-alignment: center;
+}
+
+.payment-subtitle {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+    -fx-alignment: center;
+}
+
+.payment-amount {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #e74c3c;
+    -fx-alignment: center;
+    -fx-padding: 5px 0;
+}
+
+.payment-method-group {
+    -fx-spacing: 12px;
+    -fx-padding: 18px 0;
+}
+
+.payment-radio-button {
+    -fx-font-size: 13px;
+    -fx-text-fill: #2c3e50;
+    -fx-padding: 5px 0;
+}
+
+.payment-radio-button:selected {
+    -fx-text-fill: #3498db;
+    -fx-font-weight: bold;
+}
+
+.payment-text-field {
+    -fx-pref-width: 280px;
+    -fx-padding: 8px 12px;
+    -fx-font-size: 12px;
+    -fx-background-radius: 6px;
+    -fx-border-radius: 6px;
+    -fx-border-color: #dcdde1;
+    -fx-border-width: 1px;
+    -fx-background-color: #ffffff;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 2, 0, 0, 1);
+}
+
+.payment-text-field:focused {
+    -fx-border-color: #3498db;
+    -fx-background-color: #f8f9fa;
+    -fx-effect: dropshadow(three-pass-box, rgba(52,152,219,0.2), 4, 0, 0, 3);
+}
+
+.payment-button {
+    -fx-background-color: linear-gradient(to right, #27ae60, #2ecc71);
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 12px 30px;
+    -fx-background-radius: 25px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 4, 0, 0, 3);
+    -fx-transition: all 0.3s ease;
+}
+
+.payment-button:hover {
+    -fx-background-color: linear-gradient(to right, #229954, #27ae60);
+    -fx-scale-x: 1.03;
+    -fx-scale-y: 1.03;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 6, 0, 0, 4);
+}
+
+.payment-button:pressed {
+    -fx-background-color: linear-gradient(to right, #1e8449, #229954);
+    -fx-scale-x: 0.97;
+    -fx-scale-y: 0.97;
+}
+
+.payment-cancel-button {
+    -fx-background-color: linear-gradient(to right, #e74c3c, #c0392b);
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 12px 30px;
+    -fx-background-radius: 25px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 4, 0, 0, 3);
+    -fx-transition: all 0.3s ease;
+}
+
+.payment-cancel-button:hover {
+    -fx-background-color: linear-gradient(to right, #c0392b, #a93226);
+    -fx-scale-x: 1.03;
+    -fx-scale-y: 1.03;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 6, 0, 0, 4);
+}
+
+.payment-cancel-button:pressed {
+    -fx-background-color: linear-gradient(to right, #a93226, #922b21);
+    -fx-scale-x: 0.97;
+    -fx-scale-y: 0.97;
+}
+
+.payment-security-notice {
+    -fx-font-size: 11px;
+    -fx-text-fill: #7f8c8d;
+    -fx-alignment: center;
+    -fx-padding: 10px 0;
+    -fx-font-style: italic;
+}
+
+.payment-processing {
+    -fx-background-color: rgba(255, 255, 255, 0.9);
+    -fx-background-radius: 10px;
+    -fx-padding: 25px;
+    -fx-alignment: center;
+    -fx-spacing: 18px;
+}
+
+.payment-processing .progress-indicator {
+    -fx-pref-width: 50px;
+    -fx-pref-height: 50px;
+}
+
+.payment-processing .label {
+    -fx-font-size: 15px;
+    -fx-text-fill: #2c3e50;
+    -fx-font-weight: bold;
+}
+
+/* Flight details styling */
+.flight-details {
+    -fx-background-color: #f8f9fa;
+    -fx-background-radius: 10px;
+    -fx-padding: 18px;
+    -fx-border-radius: 10px;
+    -fx-border-color: #e9ecef;
+    -fx-border-width: 1px;
+}
+
+.flight-detail-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #7f8c8d;
+    -fx-font-weight: normal;
+}
+
+.flight-detail-value {
+    -fx-font-size: 14px;
+    -fx-text-fill: #2c3e50;
+    -fx-font-weight: bold;
+}
+
+/* Titled pane styling for payment methods */
+.payment-titled-pane > .title {
+    -fx-background-color: linear-gradient(to right, #5A6FC1, #6B8DE3);
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-padding: 8px 12px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 4, 0, 0, 3);
+}
+
+.payment-titled-pane > .content {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #dcdde1;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-padding: 12px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 3, 0, 0, 3);
+}

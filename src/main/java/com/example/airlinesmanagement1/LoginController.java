@@ -34,7 +34,7 @@ public class LoginController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         brandingImageView.setImage(
-                new Image(new File("Images/Mainlogo.png").toURI().toString()));
+                new Image(new File("Images/Regi.png").toURI().toString()));
         lockImageView.setImage(
                 new Image(new File("Images/Keylogo.png").toURI().toString()));
     }

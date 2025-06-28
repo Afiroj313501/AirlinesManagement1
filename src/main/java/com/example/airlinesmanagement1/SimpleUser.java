@@ -6,7 +6,7 @@ import java.net.*;
 public class SimpleUser {
     public static void main(String[] args) {
         String serverAddress = "localhost";
-        int port = 5000;
+        int port = 5001;
         String clientName = "User1";
 
         try {

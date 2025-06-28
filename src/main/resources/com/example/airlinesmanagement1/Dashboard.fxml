@@ -18,10 +18,10 @@
                <children>
                   <Button onAction="#goToFlightInfo" prefHeight="39.0" prefWidth="138.0" style="-fx-background-color: #6279E0;" styleClass="sidebar-button" text="Dashboard" />
                   <Button onAction="#goToManageBookings" styleClass="sidebar-button" text="Book Flight" />
-                  <Button onAction="#goToManageBookings" styleClass="sidebar-button" text="Manage Flight" />
+                  <Button onAction="#goToManageFlight" styleClass="sidebar-button" text="Manage Flight" />
                   <Button onAction="#goToBookingHistory" styleClass="sidebar-button" text="Ticket" />
                   <Button onAction="#goToSupport" styleClass="sidebar-button" text="Support" />
-                  <Button onAction="#goToSettings" styleClass="sidebar-button" text="Reports" />
+                  <Button onAction="#goToSettings" styleClass="sidebar-button" text="Rating" />
                   <Button onAction="#handleLogout" styleClass="sidebar-button" text="Logout" />
                </children>
             </VBox>

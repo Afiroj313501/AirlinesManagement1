@@ -6,9 +6,14 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ToggleButton;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
 import java.sql.*;
 import java.util.*;
+import java.io.IOException;
 
 public class SeatSelectionController {
 
@@ -173,66 +178,87 @@ public class SeatSelectionController {
     }
 
     private void showPaymentOptions() {
-        ChoiceDialog<String> dialog = new ChoiceDialog<>("bKash",
-                "bKash", "Rocket", "Nagad", "Eastern Bank", "Brac Bank");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/airlinesmanagement1/Payment.fxml"));
+            Parent root = loader.load();
 
-        dialog.setTitle("Select Payment Method");
-        dialog.setHeaderText("Total Amount: " + (selectedSeatCount * seatPrice) + " BDT");
-        dialog.setContentText("Choose your payment option:");
+            PaymentController paymentController = loader.getController();
+            
+            // Pass all necessary data to the payment controller
+            paymentController.setPaymentData(
+                selectedSeatCount * seatPrice,
+                getFlightFromCity(),
+                getFlightToCity(),
+                getFlightDate(),
+                selectedSeatButtons.keySet(),
+                currentUsername,
+                flightId,
+                seatPrice,
+                selectedSeatButtons,
+                this::onPaymentSuccess
+            );
 
-        dialog.showAndWait().ifPresent(method -> {
-            showAlert(AlertType.INFORMATION, "Payment Successful", "Paid using " + method);
-            confirmSeatBookings();
-        });
+            Stage paymentStage = new Stage();
+            paymentStage.setTitle("Secure Payment Gateway");
+            paymentStage.setScene(new Scene(root));
+            paymentStage.setResizable(false);
+            paymentStage.show();
+
+        } catch (IOException e) {
+            showAlert(AlertType.ERROR, "Payment Error", "Could not load payment interface: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
-    private void confirmSeatBookings() {
-        if (currentUsername == null) {
-            System.out.println("Warning: currentUsername is null, using 'baba_yaga' as fallback.");
-            currentUsername = "baba_yaga"; // Temporary fallback
-        }
+    private void onPaymentSuccess() {
+        // Clear selections and update UI after successful payment
+        selectedSeatButtons.clear();
+        selectedSeatCount = 0;
+        updateSeatAndPriceDisplay();
+        paymentButton.setDisable(true);
+        loadSeats();
+    }
+
+    private String getFlightFromCity() {
         try (Connection conn = new DatabaseConnection().getConnection()) {
-            conn.setAutoCommit(false);
-
-            for (String seatNo : selectedSeatButtons.keySet()) {
-                System.out.println("Attempting to book seat: " + seatNo + " for user: " + currentUsername + ", flightId: " + flightId);
-                PreparedStatement seatStmt = conn.prepareStatement(
-                        "UPDATE seats SET status='booked', user_name=?, booking_date=CURDATE() " +
-                                "WHERE flight_id=? AND seat_number=? AND status='available'"
-                );
-                seatStmt.setString(1, currentUsername);
-                seatStmt.setInt(2, flightId);
-                seatStmt.setString(3, seatNo);
-                int seatRows = seatStmt.executeUpdate();
-                if (seatRows == 0) {
-                    conn.rollback();
-                    showAlert(AlertType.ERROR, "Booking Failed", "Seat " + seatNo + " is already booked.");
-                    return;
-                }
-
-                System.out.println("Inserting ticket for seat: " + seatNo);
-                PreparedStatement ticketStmt = conn.prepareStatement(
-                        "INSERT INTO tickets (user_name, flight_id, seat, booking_date, price) " +
-                                "VALUES (?, ?, ?, CURDATE(), ?)"
-                );
-                ticketStmt.setString(1, currentUsername);
-                ticketStmt.setInt(2, flightId);
-                ticketStmt.setString(3, seatNo);
-                ticketStmt.setDouble(4, seatPrice);
-                ticketStmt.executeUpdate();
+            PreparedStatement stmt = conn.prepareStatement("SELECT from_city FROM flights WHERE flight_id = ?");
+            stmt.setInt(1, flightId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getString("from_city");
             }
-
-            conn.commit();
-            selectedSeatButtons.clear();
-            selectedSeatCount = 0;
-            updateSeatAndPriceDisplay();
-            paymentButton.setDisable(true);
-            loadSeats();
-            showAlert(AlertType.INFORMATION, "Success", "Booking confirmed! Tickets are available in your account.");
         } catch (SQLException e) {
-            System.out.println("SQL Error: " + e.getMessage());
-            showAlert(AlertType.ERROR, "Booking Failed", "An error occurred while booking seats: " + e.getMessage());
+            e.printStackTrace();
         }
+        return "";
+    }
+
+    private String getFlightToCity() {
+        try (Connection conn = new DatabaseConnection().getConnection()) {
+            PreparedStatement stmt = conn.prepareStatement("SELECT to_city FROM flights WHERE flight_id = ?");
+            stmt.setInt(1, flightId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getString("to_city");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    private String getFlightDate() {
+        try (Connection conn = new DatabaseConnection().getConnection()) {
+            PreparedStatement stmt = conn.prepareStatement("SELECT flight_date FROM flights WHERE flight_id = ?");
+            stmt.setInt(1, flightId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getString("flight_date");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
     private void showAlert(AlertType type, String title, String content) {

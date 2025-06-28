@@ -23,6 +23,8 @@
 
     <!-- Buttons -->
     <Button layoutX="50" layoutY="460" text="Download PDF" onAction="#downloadPdfTicket" />
-    <Button layoutX="150" layoutY="460" text="Back" onAction="#goBack" />
+    <Button fx:id="cancelTicketButton" layoutX="150" layoutY="460" text="Cancel Ticket" 
+            onAction="#cancelSelectedTicket" style="-fx-background-color: #dc3545; -fx-text-fill: white;" />
+    <Button layoutX="250" layoutY="460" text="Back" onAction="#goBack" />
 
 </AnchorPane>

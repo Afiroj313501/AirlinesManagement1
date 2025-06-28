@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -39,6 +40,9 @@ public class TicketController implements Initializable {
     @FXML
     private TableColumn<Ticket, Double> priceCol;
 
+    @FXML
+    private Button cancelTicketButton;
+
     private ObservableList<Ticket> ticketList = FXCollections.observableArrayList();
     private Stage primaryStage;
     private Scene dashboardScene; // To store the dashboard scene for back navigation
@@ -54,6 +58,7 @@ public class TicketController implements Initializable {
             }
             setupColumns();
             loadTickets();
+            setupTableSelection();
             System.out.println("Initialization completed successfully.");
         } catch (Exception e) {
             System.err.println("Error during initialization: " + e.getMessage());
@@ -114,6 +119,16 @@ public class TicketController implements Initializable {
             System.err.println("Error loading tickets: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    private void setupTableSelection() {
+        ticketTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null && cancelTicketButton != null) {
+                cancelTicketButton.setDisable(false);
+            } else if (cancelTicketButton != null) {
+                cancelTicketButton.setDisable(true);
+            }
+        });
     }
 
     public void setPrimaryStage(Stage stage, Scene dashboardScene) {
@@ -179,6 +194,71 @@ public class TicketController implements Initializable {
         } else {
             System.out.println("Error: Primary stage or dashboard scene not set. Cannot navigate back.");
             showAlert("Error", "Unable to navigate back due to stage or scene initialization issue.");
+        }
+    }
+
+    public void cancelSelectedTicket(javafx.event.ActionEvent event) {
+        Ticket selectedTicket = ticketTable.getSelectionModel().getSelectedItem();
+        if (selectedTicket == null) {
+            showAlert("No Selection", "Please select a ticket to cancel.");
+            return;
+        }
+
+        // Check if the flight is in the past
+        if (selectedTicket.getBookingDate().isBefore(LocalDate.now())) {
+            showAlert("Cannot Cancel", "Cannot cancel a ticket for a flight that has already departed.");
+            return;
+        }
+
+        // Show confirmation dialog
+        Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmDialog.setTitle("Confirm Cancellation");
+        confirmDialog.setHeaderText("Cancel Ticket");
+        confirmDialog.setContentText("Are you sure you want to cancel your ticket for flight " + 
+            selectedTicket.getFlightId() + " (Seat " + selectedTicket.getSeat() + ")?\n" +
+            "This action cannot be undone.");
+
+        confirmDialog.showAndWait().ifPresent(response -> {
+            if (response == javafx.scene.control.ButtonType.OK) {
+                performCancellation(selectedTicket);
+            }
+        });
+    }
+
+    private void performCancellation(Ticket ticket) {
+        String currentUser = Session.getInstance().getUsername();
+        
+        try (Connection conn = new DatabaseConnection().getConnection()) {
+            conn.setAutoCommit(false);
+            
+            try {
+                // Delete the ticket
+                String deleteQuery = "DELETE FROM tickets WHERE user_name = ? AND seat = ? AND booking_date = ?";
+                try (PreparedStatement deleteStmt = conn.prepareStatement(deleteQuery)) {
+                    deleteStmt.setString(1, currentUser);
+                    deleteStmt.setString(2, ticket.getSeat());
+                    deleteStmt.setDate(3, java.sql.Date.valueOf(ticket.getBookingDate()));
+                    
+                    int rowsAffected = deleteStmt.executeUpdate();
+                    if (rowsAffected > 0) {
+                        conn.commit();
+                        showAlert("Success", "Ticket cancelled successfully for flight " + ticket.getFlightId() + 
+                            " (Seat " + ticket.getSeat() + ").");
+                        loadTickets(); // Refresh the table
+                    } else {
+                        conn.rollback();
+                        showAlert("Error", "Failed to cancel ticket. Please try again.");
+                    }
+                }
+            } catch (Exception e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(true);
+            }
+        } catch (Exception e) {
+            showAlert("Database Error", "Error cancelling ticket: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
