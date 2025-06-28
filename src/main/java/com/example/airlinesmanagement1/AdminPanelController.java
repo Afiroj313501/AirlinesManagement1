@@ -1,6 +1,5 @@
 package com.example.airlinesmanagement1;
 
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -8,174 +7,154 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
-import java.io.*;
-import java.net.*;
+import java.sql.*;
 import java.time.LocalDate;
 
 public class AdminPanelController {
 
-    // City Management Fields
-    @FXML
-    private TextField cityNameField;
-    @FXML
-    private TableView<City> cityTable;
-    @FXML
-    private TableColumn<City, String> cityNameColumn;
+    // City UI components
+    @FXML private TextField cityNameField;
+    @FXML private TableView<City> cityTable;
+    @FXML private TableColumn<City, String> cityNameColumn;
 
-    // Flight Management Fields
-    @FXML
-    private TextField flightNumberField;
-    @FXML
-    private TextField fromCityField;
-    @FXML
-    private TextField toCityField;
-    @FXML
-    private DatePicker flightDatePicker;
-    @FXML
-    private TextField departureTimeField;
-    @FXML
-    private TextField priceField;
-    @FXML
-    private TableView<Flight> flightTable;
-    @FXML
-    private TableColumn<Flight, String> flightNumberColumn;
-    @FXML
-    private TableColumn<Flight, String> fromCityColumn;
-    @FXML
-    private TableColumn<Flight, String> toCityColumn;
-    @FXML
-    private TableColumn<Flight, LocalDate> flightDateColumn;
-    @FXML
-    private TableColumn<Flight, String> departureTimeColumn;
-    @FXML
-    private TableColumn<Flight, Double> priceColumn;
+    // Flight UI components
+    @FXML private TextField flightNumberField;
+    @FXML private TextField fromCityField;
+    @FXML private TextField toCityField;
+    @FXML private DatePicker flightDatePicker;
+    @FXML private TextField departureTimeField;
+    @FXML private TextField priceField;
 
-    // Chat Fields
-    @FXML
-    private TextArea chatArea;
-    @FXML
-    private TextField messageField;
-    @FXML
-    private Button sendButton;
+    @FXML private TableView<Flight> flightTable;
+    @FXML private TableColumn<Flight, String> flightNumberColumn;
+    @FXML private TableColumn<Flight, String> fromCityColumn;
+    @FXML private TableColumn<Flight, String> toCityColumn;
+    @FXML private TableColumn<Flight, LocalDate> flightDateColumn;
+    @FXML private TableColumn<Flight, String> departureTimeColumn;
+    @FXML private TableColumn<Flight, Double> priceColumn;
 
-    private Socket socket;
-    private PrintWriter out;
-    private BufferedReader in;
-    private final String adminName = "Admin"; // Matches ADMIN_NAME in ChatServer
+    private final String DB_URL = "jdbc:mysql://localhost:3306/airlines_management1?useSSL=false";
+    private final String DB_USER = "root";
+    private final String DB_PASSWORD = ""; // Set your password here
 
-    // Data Models
+    // Observable lists for TableViews
     private ObservableList<City> cityList = FXCollections.observableArrayList();
     private ObservableList<Flight> flightList = FXCollections.observableArrayList();
 
+    @FXML
     public void initialize() {
-        // Initialize City Table
+        // Setup City Table column
         cityNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-        cityTable.setItems(cityList);
 
-        // Initialize Flight Table
+        // Setup Flight Table columns
         flightNumberColumn.setCellValueFactory(new PropertyValueFactory<>("flightNumber"));
         fromCityColumn.setCellValueFactory(new PropertyValueFactory<>("fromCity"));
         toCityColumn.setCellValueFactory(new PropertyValueFactory<>("toCity"));
-        flightDateColumn.setCellValueFactory(new PropertyValueFactory<>("date"));
+        flightDateColumn.setCellValueFactory(new PropertyValueFactory<>("flightDate"));
         departureTimeColumn.setCellValueFactory(new PropertyValueFactory<>("departureTime"));
         priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
+
+        // Load initial data
+        loadCitiesFromDatabase();
+        loadFlightsFromDatabase();
+
+        // Bind observable lists to tables
+        cityTable.setItems(cityList);
         flightTable.setItems(flightList);
-
-        // Connect to chat server
-        connectToServer();
-        // Start a thread to listen for incoming messages
-        new Thread(this::receiveMessages).start();
     }
 
-    // City Management Handlers
     @FXML
-    private void handleAddCity(ActionEvent event) {
+    public void handleAddCity(ActionEvent event) {
         String cityName = cityNameField.getText().trim();
-        if (!cityName.isEmpty()) {
-            cityList.add(new City(cityName));
+        if (cityName.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Validation Error", "City name cannot be empty.");
+            return;
+        }
+        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+             PreparedStatement ps = conn.prepareStatement("INSERT INTO cities (name) VALUES (?)")) {
+            ps.setString(1, cityName);
+            ps.executeUpdate();
+            showAlert(Alert.AlertType.INFORMATION, "Success", "City added successfully!");
             cityNameField.clear();
-        } else {
-            showAlert("Error", "City name cannot be empty.");
+            loadCitiesFromDatabase();
+        } catch (SQLException e) {
+            showAlert(Alert.AlertType.ERROR, "Database Error", e.getMessage());
         }
     }
 
-    // Flight Management Handlers
     @FXML
-    private void handleAddFlight(ActionEvent event) {
+    public void handleAddFlight(ActionEvent event) {
+        String flightNumber = flightNumberField.getText().trim();
+        String fromCity = fromCityField.getText().trim();
+        String toCity = toCityField.getText().trim();
+        LocalDate flightDate = flightDatePicker.getValue();
+        String departureTime = departureTimeField.getText().trim();
+        String priceText = priceField.getText().trim();
+
+        if (flightNumber.isEmpty() || fromCity.isEmpty() || toCity.isEmpty() || flightDate == null || departureTime.isEmpty() || priceText.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Validation Error", "Please fill all flight details.");
+            return;
+        }
+
+        double price;
         try {
-            String flightNumber = flightNumberField.getText().trim();
-            String fromCity = fromCityField.getText().trim();
-            String toCity = toCityField.getText().trim();
-            LocalDate date = flightDatePicker.getValue();
-            String departureTime = departureTimeField.getText().trim();
-            double price = Double.parseDouble(priceField.getText().trim());
-
-            if (flightNumber.isEmpty() || fromCity.isEmpty() || toCity.isEmpty() || date == null || departureTime.isEmpty()) {
-                showAlert("Error", "All fields must be filled.");
-                return;
-            }
-
-            flightList.add(new Flight(flightNumber, fromCity, toCity, date, departureTime, price));
-            clearFlightFields();
+            price = Double.parseDouble(priceText);
         } catch (NumberFormatException e) {
-            showAlert("Error", "Price must be a valid number.");
+            showAlert(Alert.AlertType.WARNING, "Validation Error", "Price must be a valid number.");
+            return;
+        }
+
+        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+             PreparedStatement ps = conn.prepareStatement(
+                     "INSERT INTO flights (flight_number, from_city, to_city, flight_date, departure_time, price) VALUES (?, ?, ?, ?, ?, ?)")) {
+            ps.setString(1, flightNumber);
+            ps.setString(2, fromCity);
+            ps.setString(3, toCity);
+            ps.setDate(4, Date.valueOf(flightDate));
+            ps.setString(5, departureTime);
+            ps.setDouble(6, price);
+            ps.executeUpdate();
+            showAlert(Alert.AlertType.INFORMATION, "Success", "Flight added successfully!");
+            clearFlightFields();
+            loadFlightsFromDatabase();
+        } catch (SQLException e) {
+            showAlert(Alert.AlertType.ERROR, "Database Error", e.getMessage());
         }
     }
 
-    // Chat Handlers
-    private void connectToServer() {
-        try {
-            socket = new Socket("localhost", 5000);
-            out = new PrintWriter(socket.getOutputStream(), true);
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
-            // Send admin name to server
-            out.println(adminName);
-        } catch (IOException e) {
-            Platform.runLater(() -> chatArea.appendText("Error connecting to server: " + e.getMessage() + "\n"));
-        }
-    }
-
-    private void receiveMessages() {
-        try {
-            String message;
-            while ((message = in.readLine()) != null) {
-                if (message.startsWith("SUBMITNAME")) {
-                    out.println(adminName);
-                } else if (message.startsWith("NAMEACCEPTED")) {
-                    Platform.runLater(() -> chatArea.appendText("Connected as " + adminName + "\n"));
-                } else if (message.startsWith("MESSAGE")) {
-                    String finalMessage = message.substring(8); // Remove "MESSAGE " prefix
-                    Platform.runLater(() -> chatArea.appendText(finalMessage + "\n"));
-                }
+    private void loadCitiesFromDatabase() {
+        cityList.clear();
+        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT name FROM cities")) {
+            while (rs.next()) {
+                cityList.add(new City(rs.getString("name")));
             }
-        } catch (IOException e) {
-            Platform.runLater(() -> chatArea.appendText("Connection lost: " + e.getMessage() + "\n"));
-        } finally {
-            closeConnection();
+        } catch (SQLException e) {
+            showAlert(Alert.AlertType.ERROR, "Database Error", e.getMessage());
         }
     }
 
-    @FXML
-    private void sendMessage() {
-        String message = messageField.getText().trim();
-        if (!message.isEmpty()) {
-            out.println(message);
-            messageField.clear();
+    private void loadFlightsFromDatabase() {
+        flightList.clear();
+        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT flight_number, from_city, to_city, flight_date, departure_time, price FROM flights")) {
+            while (rs.next()) {
+                flightList.add(new Flight(
+                        rs.getString("flight_number"),
+                        rs.getString("from_city"),
+                        rs.getString("to_city"),
+                        rs.getDate("flight_date").toLocalDate(),
+                        rs.getString("departure_time"),
+                        rs.getDouble("price")
+                ));
+            }
+        } catch (SQLException e) {
+            showAlert(Alert.AlertType.ERROR, "Database Error", e.getMessage());
         }
     }
 
-    private void closeConnection() {
-        try {
-            if (in != null) in.close();
-            if (out != null) out.close();
-            if (socket != null) socket.close();
-        } catch (IOException e) {
-            System.err.println("Error closing connection: " + e.getMessage());
-        }
-    }
-
-    // Utility Methods
     private void clearFlightFields() {
         flightNumberField.clear();
         fromCityField.clear();
@@ -185,71 +164,11 @@ public class AdminPanelController {
         priceField.clear();
     }
 
-    private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
+    private void showAlert(Alert.AlertType type, String title, String content) {
+        Alert alert = new Alert(type);
         alert.setTitle(title);
         alert.setHeaderText(null);
-        alert.setContentText(message);
+        alert.setContentText(content);
         alert.showAndWait();
-    }
-
-    // Data Model Classes
-    public static class City {
-        private String name;
-
-        public City(String name) {
-            this.name = name;
-        }
-
-        public String getName() {
-            return name;
-        }
-    }
-
-    public static class Flight {
-        private String flightNumber;
-        private String fromCity;
-        private String toCity;
-        private LocalDate date;
-        private String departureTime;
-        private double price;
-
-        public Flight(String flightNumber, String fromCity, String toCity, LocalDate date, String departureTime, double price) {
-            this.flightNumber = flightNumber;
-            this.fromCity = fromCity;
-            this.toCity = toCity;
-            this.date = date;
-            this.departureTime = departureTime;
-            this.price = price;
-        }
-
-        public String getFlightNumber() {
-            return flightNumber;
-        }
-
-        public String getFromCity() {
-            return fromCity;
-        }
-
-        public String getToCity() {
-            return toCity;
-        }
-
-        public LocalDate getDate() {
-            return date;
-        }
-
-        public String getDepartureTime() {
-            return departureTime;
-        }
-
-        public double getPrice() {
-            return price;
-        }
-    }
-
-    // Optional: Call this when the AdminPanel window is closed
-    public void shutdown() {
-        closeConnection();
     }
 }
