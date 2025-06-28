@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.airlinesmanagement1.CancelTicketController"
+            prefWidth="800" prefHeight="600" style="-fx-background-color: #ffffff;" stylesheets="@style.css">
+
+    <VBox spacing="20" alignment="CENTER" layoutX="50" layoutY="30" prefWidth="700">
+        <Label text="✈️ Cancel Your Ticket" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #4F67D6;" />
+        
+        <Label text="Select a ticket to cancel:" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+        
+        <TableView fx:id="ticketTable" prefHeight="300" prefWidth="650">
+            <columns>
+                <TableColumn fx:id="flightIdCol" text="Flight Number" prefWidth="150" />
+                <TableColumn fx:id="seatCol" text="Seat" prefWidth="100" />
+                <TableColumn fx:id="dateCol" text="Flight Date" prefWidth="150" />
+                <TableColumn fx:id="priceCol" text="Price" prefWidth="100" />
+                <TableColumn fx:id="statusCol" text="Status" prefWidth="100" />
+            </columns>
+        </TableView>
+        
+        <HBox spacing="20" alignment="CENTER">
+            <Button fx:id="cancelButton" text="Cancel Selected Ticket" 
+                    onAction="#handleCancelTicket" 
+                    style="-fx-background-color: #dc3545; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20;" />
+            <Button text="Refresh" onAction="#refreshTickets" 
+                    style="-fx-background-color: #17a2b8; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20;" />
+            <Button text="Back to Dashboard" onAction="#goToDashboard" 
+                    style="-fx-background-color: #6c757d; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20;" />
+        </HBox>
+        
+        <Label fx:id="statusLabel" text="" style="-fx-font-size: 14px;" />
+    </VBox>
+</AnchorPane> 

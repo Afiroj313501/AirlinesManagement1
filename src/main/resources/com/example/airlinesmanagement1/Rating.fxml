@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="800.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.airlinesmanagement1.RatingController">
+
+   <!-- Header -->
+   <top>
+      <HBox alignment="CENTER" style="-fx-background-color: #4F67D6; -fx-padding: 10;" prefHeight="50">
+         <Label text="✈️ Rate Your Experience" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: white;" />
+      </HBox>
+   </top>
+
+   <!-- Main Content -->
+   <center>
+      <HBox spacing="20" alignment="CENTER" style="-fx-padding: 15;">
+         
+         <!-- Left Panel - Submit Rating -->
+         <VBox spacing="15" prefWidth="350" style="-fx-background-color: #f8f9fa; -fx-padding: 15; -fx-background-radius: 8;">
+            <Label text="Share Your Experience" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2f3640;" />
+            
+            <VBox spacing="8">
+               <Label text="Rate our service:" style="-fx-font-size: 12px; -fx-font-weight: bold;" />
+               <HBox spacing="2" alignment="CENTER_LEFT">
+                  <Button fx:id="star1" text="★" style="-fx-font-size: 24px; -fx-text-fill: #ddd; -fx-background-color: transparent; -fx-border-color: transparent;" onAction="#selectRating" />
+                  <Button fx:id="star2" text="★" style="-fx-font-size: 24px; -fx-text-fill: #ddd; -fx-background-color: transparent; -fx-border-color: transparent;" onAction="#selectRating" />
+                  <Button fx:id="star3" text="★" style="-fx-font-size: 24px; -fx-text-fill: #ddd; -fx-background-color: transparent; -fx-border-color: transparent;" onAction="#selectRating" />
+                  <Button fx:id="star4" text="★" style="-fx-font-size: 24px; -fx-text-fill: #ddd; -fx-background-color: transparent; -fx-border-color: transparent;" onAction="#selectRating" />
+                  <Button fx:id="star5" text="★" style="-fx-font-size: 24px; -fx-text-fill: #ddd; -fx-background-color: transparent; -fx-border-color: transparent;" onAction="#selectRating" />
+               </HBox>
+               <Label fx:id="ratingText" text="Click on a star to rate" style="-fx-font-size: 11px; -fx-text-fill: #666;" />
+            </VBox>
+            
+            <VBox spacing="8">
+               <Label text="Your feedback:" style="-fx-font-size: 12px; -fx-font-weight: bold;" />
+               <TextArea fx:id="feedbackText" promptText="Tell us about your experience..." prefHeight="80" wrapText="true" styleClass="login-text-field" />
+            </VBox>
+            
+            <VBox spacing="8">
+               <Label text="Flight Number (optional):" style="-fx-font-size: 12px; -fx-font-weight: bold;" />
+               <TextField fx:id="flightNumberField" promptText="e.g., A101" styleClass="login-text-field" />
+            </VBox>
+            
+            <Button fx:id="submitButton" text="Submit Rating" onAction="#submitRating" 
+                    styleClass="login-button" prefHeight="35" prefWidth="150" />
+            
+            <Label fx:id="submitMessage" text="" style="-fx-font-size: 11px;" />
+         </VBox>
+         
+         <!-- Right Panel - View Ratings -->
+         <VBox spacing="15" prefWidth="350" style="-fx-background-color: #f8f9fa; -fx-padding: 15; -fx-background-radius: 8;">
+            <HBox alignment="CENTER_LEFT" spacing="10">
+               <Label text="Community Ratings" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2f3640;" />
+               <Button text="Refresh" onAction="#refreshRatings" style="-fx-background-color: #17a2b8; -fx-text-fill: white; -fx-font-size: 11px;" />
+            </HBox>
+            
+            <ScrollPane prefHeight="300" fitToWidth="true" style="-fx-background: transparent; -fx-background-color: transparent;">
+               <VBox fx:id="ratingsContainer" spacing="10" />
+            </ScrollPane>
+            
+            <HBox alignment="CENTER" spacing="15">
+               <Label fx:id="averageRating" text="Average Rating: ★★★★★" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #FFD700;" />
+               <Label fx:id="totalRatings" text="Total Reviews: 0" style="-fx-font-size: 12px;" />
+            </HBox>
+         </VBox>
+      </HBox>
+   </center>
+
+   <!-- Footer -->
+   <bottom>
+      <HBox alignment="CENTER" style="-fx-background-color: #f4f4f4; -fx-padding: 8;">
+         <Button text="Back to Dashboard" onAction="#goToDashboard" styleClass="register-button" />
+      </HBox>
+   </bottom>
+
+</BorderPane> 
