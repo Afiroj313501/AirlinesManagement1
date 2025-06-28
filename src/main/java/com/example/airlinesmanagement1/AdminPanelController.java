@@ -1,5 +1,6 @@
 package com.example.airlinesmanagement1;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -7,6 +8,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
+import java.io.*;
+import java.net.*;
 import java.sql.*;
 import java.time.LocalDate;
 
@@ -33,6 +36,10 @@ public class AdminPanelController {
     @FXML private TableColumn<Flight, String> departureTimeColumn;
     @FXML private TableColumn<Flight, Double> priceColumn;
 
+    // Chatbox UI components
+    @FXML private ListView<String> messageList;
+    @FXML private TextField messageInput;
+
     private final String DB_URL = "jdbc:mysql://localhost:3306/airlines_management1?useSSL=false";
     private final String DB_USER = "root";
     private final String DB_PASSWORD = ""; // Set your password here
@@ -40,6 +47,11 @@ public class AdminPanelController {
     // Observable lists for TableViews
     private ObservableList<City> cityList = FXCollections.observableArrayList();
     private ObservableList<Flight> flightList = FXCollections.observableArrayList();
+
+    // Socket for messaging
+    private Socket socket;
+    private PrintWriter out;
+    private BufferedReader in;
 
     @FXML
     public void initialize() {
@@ -61,6 +73,65 @@ public class AdminPanelController {
         // Bind observable lists to tables
         cityTable.setItems(cityList);
         flightTable.setItems(flightList);
+
+        // Initialize chat connection
+        initializeChat();
+    }
+
+    private void initializeChat() {
+        try {
+            socket = new Socket("localhost", 5000);
+            out = new PrintWriter(socket.getOutputStream(), true);
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+            // Handle name submission loop
+            new Thread(() -> {
+                try {
+                    String serverResponse;
+                    while ((serverResponse = in.readLine()) != null) {
+                        System.out.println("Admin received: " + serverResponse); // Debug log
+                        if (serverResponse.equals("SUBMITNAME")) {
+                            System.out.println("Submitting name: Admin");
+                            out.println("Admin");
+                        } else if (serverResponse.startsWith("NAMEACCEPTED")) {
+                            Platform.runLater(() -> {
+                                messageList.getItems().add("Connected as Admin");
+                                System.out.println("UI updated with: Connected as Admin"); // Confirm UI update
+                            });
+                        } else if (serverResponse.startsWith("PRIVATE")) {
+                            String message = serverResponse.substring(8); // Remove "PRIVATE " prefix
+                            Platform.runLater(() -> {
+                                messageList.getItems().add(message);
+                                System.out.println("UI updated with: " + message); // Confirm UI update
+                            });
+                        } else if (serverResponse.startsWith("MESSAGE")) {
+                            String message = serverResponse.substring(8); // Remove "MESSAGE " prefix
+                            Platform.runLater(() -> {
+                                messageList.getItems().add(message);
+                                System.out.println("UI updated with: " + message); // Confirm UI update
+                            });
+                        } else if (serverResponse.equals("NAMETAKEN")) {
+                            System.out.println("Admin name taken, trying a new name");
+                            out.println("Admin" + new java.util.Random().nextInt(100)); // Try a unique name
+                        }
+                    }
+                } catch (IOException e) {
+                    Platform.runLater(() -> showAlert(Alert.AlertType.ERROR, "Chat Error", "Connection lost: " + e.getMessage()));
+                }
+            }).start();
+        } catch (IOException e) {
+            Platform.runLater(() -> showAlert(Alert.AlertType.ERROR, "Chat Error", "Failed to connect to server: " + e.getMessage()));
+        }
+    }
+
+    @FXML
+    private void handleSendMessage() {
+        String message = messageInput.getText().trim();
+        if (!message.isEmpty()) {
+            System.out.println("Admin sending: " + message); // Debug log
+            out.println("/msg " + "User1" + " " + message); // Send private message to User1
+            messageInput.clear();
+        }
     }
 
     @FXML
@@ -100,7 +171,7 @@ public class AdminPanelController {
         try {
             price = Double.parseDouble(priceText);
         } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.WARNING, "Validation Error", "Price must be a valid number.");
+            showAlert(Alert.AlertType.ERROR, "Validation Error", "Price must be a valid number.");
             return;
         }
 

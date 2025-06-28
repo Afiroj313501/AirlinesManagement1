@@ -84,6 +84,20 @@
                 </content>
             </TitledPane>
 
+            <!-- Chatbox Section -->
+            <TitledPane text="Chatbox" expanded="true" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="2">
+                <content>
+                    <GridPane hgap="10" vgap="10">
+                        <padding>
+                            <Insets top="10" right="10" bottom="10" left="10"/>
+                        </padding>
+
+                        <ListView fx:id="messageList" prefHeight="150" GridPane.rowIndex="0" GridPane.columnIndex="0" GridPane.columnSpan="2"/>
+                        <TextField fx:id="messageInput" promptText="Type a message..." GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <Button text="Send" onAction="#handleSendMessage" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                    </GridPane>
+                </content>
+            </TitledPane>
         </GridPane>
     </center>
 </BorderPane>

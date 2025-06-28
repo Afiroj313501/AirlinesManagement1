@@ -10,10 +10,13 @@ public class ChatServer {
     private static final String ADMIN_NAME = "Admin"; // Special name for admin
 
     public static void main(String[] args) {
-        System.out.println("Chat Server is running on port " + PORT);
+        System.out.println("Chat Server is starting on port " + PORT);
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
+            System.out.println("Chat Server is running and accepting connections on port " + PORT);
             while (true) {
-                new ClientHandler(serverSocket.accept()).start();
+                Socket clientSocket = serverSocket.accept();
+                System.out.println("New client connection from: " + clientSocket.getInetAddress());
+                new ClientHandler(clientSocket).start();
             }
         } catch (IOException e) {
             System.err.println("Server error: " + e.getMessage());
@@ -33,14 +36,13 @@ public class ChatServer {
 
         public void run() {
             try {
-                // Set up input and output streams
                 in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 out = new PrintWriter(socket.getOutputStream(), true);
 
-                // Request and store client name
                 while (true) {
                     out.println("SUBMITNAME");
                     clientName = in.readLine();
+                    System.out.println("Received name attempt from " + socket.getInetAddress() + ": " + clientName);
                     if (clientName == null) {
                         return;
                     }
@@ -48,18 +50,21 @@ public class ChatServer {
                         if (!clientName.isEmpty() && !clients.containsKey(clientName)) {
                             clients.put(clientName, out);
                             break;
+                        } else {
+                            out.println("NAMETAKEN");
                         }
                     }
                 }
 
-                // Welcome the client
                 out.println("NAMEACCEPTED " + clientName);
                 broadcastMessage("Server", clientName + " has joined the chat");
 
-                // Handle messages
                 String message;
                 while ((message = in.readLine()) != null) {
-                    if (!message.isEmpty()) {
+                    System.out.println(clientName + " sent: " + message);
+                    if (message.startsWith("/msg admin ")) {
+                        sendPrivateMessage(clientName, ADMIN_NAME, message.substring(10)); // Remove "/msg admin "
+                    } else if (!message.isEmpty()) {
                         broadcastMessage(clientName, message);
                     }
                 }
@@ -82,29 +87,28 @@ public class ChatServer {
 
         private void broadcastMessage(String sender, String message) {
             synchronized (clients) {
-                for (PrintWriter writer : clients.values()) {
+                System.out.println("Broadcasting: " + sender + ": " + message + " to " + clients.size() + " clients");
+                for (Map.Entry<String, PrintWriter> entry : clients.entrySet()) {
+                    PrintWriter writer = entry.getValue();
                     writer.println("MESSAGE " + sender + ": " + message);
+                    System.out.println("Sent to: " + entry.getKey());
                 }
             }
         }
 
-        // Optional: Private messaging (uncomment to enable)
-        /*
         private void sendPrivateMessage(String sender, String recipient, String message) {
             synchronized (clients) {
                 PrintWriter recipientWriter = clients.get(recipient);
                 if (recipientWriter != null) {
-                    recipientWriter.println("MESSAGE " + sender + ": " + message);
-                }
-                // Also send to sender for confirmation
-                if (!sender.equals(recipient)) {
+                    System.out.println("Sending private message from " + sender + " to " + recipient + ": " + message);
+                    recipientWriter.println("PRIVATE " + sender + ": " + message);
+                } else {
                     PrintWriter senderWriter = clients.get(sender);
                     if (senderWriter != null) {
-                        senderWriter.println("MESSAGE " + sender + ": " + message);
+                        senderWriter.println("ERROR Private message failed: Recipient " + recipient + " not found");
                     }
                 }
             }
         }
-        */
     }
 }

@@ -42,21 +42,29 @@ public class DashboardController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        // Initialize currentScene from the welcomeLabel's scene
         currentScene = welcomeLabel.getScene();
         if (currentScene == null) {
             System.err.println("Warning: currentScene is null during initialization. Check application setup.");
+        } else {
+            System.out.println("Initialized currentScene successfully.");
         }
 
+        // Load dashboard image with error handling
         if (dashboardImageView != null) {
             try {
                 dashboardImageView.setImage(
                         new Image(new File("Images/Dash.png").toURI().toString())
                 );
+                System.out.println("Dashboard image loaded successfully.");
             } catch (Exception e) {
                 System.err.println("Failed to load dashboard image: " + e.getMessage());
             }
+        } else {
+            System.err.println("Warning: dashboardImageView is null. Check Dashboard.fxml for fx:id='dashboardImageView'.");
         }
 
+        // Apply animations to footerBox
         if (footerBox != null) {
             FadeTransition ft = new FadeTransition(Duration.millis(1000), footerBox);
             ft.setFromValue(0);
@@ -67,8 +75,12 @@ public class DashboardController implements Initializable {
             tt.setFromY(20);
             tt.setToY(0);
             tt.play();
+            System.out.println("Footer animations applied.");
+        } else {
+            System.err.println("Warning: footerBox is null. Check Dashboard.fxml for fx:id='footerBox'.");
         }
 
+        // Verify button initialization
         if (ticketButton == null) {
             System.err.println("Warning: ticketButton is null. Check Dashboard.fxml for fx:id='ticketButton'.");
         }
@@ -90,9 +102,7 @@ public class DashboardController implements Initializable {
             stage.setTitle(title);
             stage.show();
             System.out.println("Successfully loaded " + fxmlFile);
-            if (currentScene == null) {
-                currentScene = ((Node) event.getSource()).getScene();
-            }
+            currentScene = scene; // Update currentScene after loading
         } catch (IOException e) {
             System.err.println("Error loading " + fxmlFile + ": " + e.getMessage());
             e.printStackTrace();
