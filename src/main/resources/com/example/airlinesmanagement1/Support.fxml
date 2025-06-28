@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 
 <VBox alignment="CENTER" spacing="20" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.example.airlinesmanagement1.SupportController">
+      fx:controller="com.example.airlinesmanagement1.SupportController" stylesheets="@styles.css">
     <padding>
         <Insets top="20" right="20" bottom="20" left="20"/>
     </padding>
@@ -19,4 +19,5 @@
         <TextField fx:id="messageField" prefWidth="500" promptText="Type your message..."/>
         <Button fx:id="sendButton" text="Send" onAction="#sendMessage"/>
     </HBox>
+    <Button fx:id="backButton" text="Back" onAction="#goBackToDashboard" style="-fx-padding: 5 10;"/>
 </VBox>

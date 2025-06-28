@@ -6,6 +6,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
 import java.io.*;
 import java.net.*;
@@ -24,15 +26,18 @@ public class SupportController {
     @FXML
     private Button sendButton;
 
+    @FXML
+    private Button backButton;
+
     private Socket socket;
     private PrintWriter out;
     private BufferedReader in;
-    private String clientName = "User" + (int)(Math.random() * 1000); // Simple unique name
+    private String clientName = "User" + (int)(Math.random() * 1000);
+
+    private Scene previousScene;
 
     public void initialize() {
-        // Connect to the chat server
         connectToServer();
-        // Start a thread to listen for incoming messages
         new Thread(this::receiveMessages).start();
     }
 
@@ -41,8 +46,6 @@ public class SupportController {
             socket = new Socket("localhost", 5000);
             out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
-            // Send client name to server
             out.println(clientName);
         } catch (IOException e) {
             Platform.runLater(() -> chatArea.appendText("Error connecting to server: " + e.getMessage() + "\n"));
@@ -58,7 +61,7 @@ public class SupportController {
                 } else if (message.startsWith("NAMEACCEPTED")) {
                     Platform.runLater(() -> chatArea.appendText("Connected as " + clientName + "\n"));
                 } else if (message.startsWith("MESSAGE")) {
-                    String finalMessage = message.substring(8); // Remove "MESSAGE " prefix
+                    String finalMessage = message.substring(8);
                     Platform.runLater(() -> chatArea.appendText(finalMessage + "\n"));
                 }
             }
@@ -88,8 +91,29 @@ public class SupportController {
         }
     }
 
-    // Optional: Call this when the Support window is closed
     public void shutdown() {
         closeConnection();
+    }
+
+    @FXML
+    private void goBackToDashboard() {
+        System.out.println("Attempting to go back to Dashboard. previousScene: " + (previousScene != null));
+        if (previousScene != null) {
+            Stage stage = (Stage) backButton.getScene().getWindow();
+            if (stage != null) {
+                stage.setScene(previousScene);
+                stage.setTitle("Dashboard");
+                System.out.println("Successfully navigated back to Dashboard.");
+            } else {
+                System.err.println("Error: Stage is null.");
+            }
+        } else {
+            System.err.println("Error: Previous scene not set. Check navigation setup.");
+        }
+    }
+
+    public void setPreviousScene(Scene scene) {
+        this.previousScene = scene;
+        System.out.println("Previous scene set to: " + (scene != null ? scene.getRoot().getClass().getSimpleName() : "null"));
     }
 }

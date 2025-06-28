@@ -36,13 +36,12 @@ public class DashboardController implements Initializable {
     private javafx.scene.control.Button ticketButton;
 
     @FXML
-    private javafx.scene.control.Button adminPanelButton; // New button for admin panel
+    private javafx.scene.control.Button adminPanelButton;
 
     private Scene currentScene;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // Initialize currentScene from the welcomeLabel's scene
         currentScene = welcomeLabel.getScene();
         if (currentScene == null) {
             System.err.println("Warning: currentScene is null during initialization. Check application setup.");
@@ -50,7 +49,6 @@ public class DashboardController implements Initializable {
             System.out.println("Initialized currentScene successfully.");
         }
 
-        // Load dashboard image with error handling
         if (dashboardImageView != null) {
             try {
                 dashboardImageView.setImage(
@@ -64,7 +62,6 @@ public class DashboardController implements Initializable {
             System.err.println("Warning: dashboardImageView is null. Check Dashboard.fxml for fx:id='dashboardImageView'.");
         }
 
-        // Apply animations to footerBox
         if (footerBox != null) {
             FadeTransition ft = new FadeTransition(Duration.millis(1000), footerBox);
             ft.setFromValue(0);
@@ -80,7 +77,6 @@ public class DashboardController implements Initializable {
             System.err.println("Warning: footerBox is null. Check Dashboard.fxml for fx:id='footerBox'.");
         }
 
-        // Verify button initialization
         if (ticketButton == null) {
             System.err.println("Warning: ticketButton is null. Check Dashboard.fxml for fx:id='ticketButton'.");
         }
@@ -103,6 +99,14 @@ public class DashboardController implements Initializable {
             stage.show();
             System.out.println("Successfully loaded " + fxmlFile);
             currentScene = scene; // Update currentScene after loading
+
+            // Pass the current scene to SupportController if navigating to Support
+            if ("Support.fxml".equals(fxmlFile)) {
+                SupportController controller = loader.getController();
+                if (controller != null) {
+                    controller.setPreviousScene(currentScene); // Pass the dashboard scene
+                }
+            }
         } catch (IOException e) {
             System.err.println("Error loading " + fxmlFile + ": " + e.getMessage());
             e.printStackTrace();
@@ -181,11 +185,5 @@ public class DashboardController implements Initializable {
     private void goToSettings(ActionEvent event) {
         System.out.println("Navigating to Settings...");
         loadScene(event, "Settings.fxml", "Settings");
-    }
-
-    @FXML
-    private void goToAdminPanel(ActionEvent event) {
-        System.out.println("Navigating to Admin Panel...");
-        loadScene(event, "AdminPanel.fxml", "Admin Panel");
     }
 }

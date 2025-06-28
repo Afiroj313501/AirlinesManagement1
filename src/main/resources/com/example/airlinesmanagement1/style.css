@@ -194,3 +194,71 @@
 .custom-alert .content {
     -fx-padding: 10px;
 }
+
+/* Support Chat Specific Styles */
+#supportLabel {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff; /* White for contrast */
+    -fx-background-color: linear-gradient(to right, #ff6b6b, #ff8787); /* Red gradient */
+    -fx-padding: 10px;
+    -fx-background-radius: 10px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 5, 0, 0, 3);
+}
+
+#chatArea {
+    -fx-pref-height: 400px;
+    -fx-pref-width: 600px;
+    -fx-background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
+    -fx-border-color: #00d2d3; /* Teal border */
+    -fx-border-width: 2;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 5);
+}
+
+#chatArea:focused {
+    -fx-border-color: #00d2d3; /* Teal focus */
+    -fx-background-color: rgba(0,210,211,0.2); /* Light teal background */
+    -fx-effect: dropshadow(three-pass-box, rgba(0,210,211,0.5), 8, 0, 0, 5);
+    -fx-transition: all 0.2s ease;
+}
+
+#messageField {
+    -fx-pref-width: 500px;
+    -fx-padding: 12px;
+    -fx-font-size: 14px;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-border-color: #ff9ff3; /* Bright pink border */
+    -fx-border-width: 2;
+    -fx-background-color: rgba(255, 159, 243, 0.1); /* Light pink background */
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 3, 0, 0, 3);
+}
+
+#messageField:focused {
+    -fx-border-color: #ff9ff3; /* Brighter pink on focus */
+    -fx-background-color: rgba(255, 159, 243, 0.3); /* Lighter pink focus */
+    -fx-effect: dropshadow(three-pass-box, rgba(255,159,243,0.5), 8, 0, 0, 5);
+    -fx-transition: all 0.2s ease;
+}
+
+#sendButton {
+    -fx-background-color: linear-gradient(to right, #ff6b6b, #ff8787); /* Red gradient */
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10px;
+    -fx-padding: 12px 24px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 3, 0, 0, 3);
+    -fx-transition: all 0.3s ease;
+}
+
+#sendButton:hover {
+    -fx-background-color: linear-gradient(to right, #ff4757, #ff6b6b); /* Darker red gradient */
+}
+
+#sendButton:pressed {
+    -fx-background-color: linear-gradient(to right, #e84118, #ff4757); /* Even darker red */
+}

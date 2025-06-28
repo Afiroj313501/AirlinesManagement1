@@ -22,7 +22,6 @@
                   <Button onAction="#goToBookingHistory" styleClass="sidebar-button" text="Ticket" />
                   <Button onAction="#goToSupport" styleClass="sidebar-button" text="Support" />
                   <Button onAction="#goToSettings" styleClass="sidebar-button" text="Reports" />
-                  <Button fx:id="adminPanelButton" onAction="#goToAdminPanel" styleClass="sidebar-button" text="Admin Panel" />
                   <Button onAction="#handleLogout" styleClass="sidebar-button" text="Logout" />
                </children>
             </VBox>
