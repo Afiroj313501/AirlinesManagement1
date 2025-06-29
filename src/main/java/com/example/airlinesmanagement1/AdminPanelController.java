@@ -308,6 +308,10 @@ public class AdminPanelController {
         double price;
         try {
             price = Double.parseDouble(priceText);
+            if (price <= 0) {
+                showAlert(Alert.AlertType.ERROR, "Validation Error", "Price must be greater than 0.");
+                return;
+            }
         } catch (NumberFormatException e) {
             showAlert(Alert.AlertType.ERROR, "Validation Error", "Price must be a valid number.");
             return;
@@ -319,6 +323,10 @@ public class AdminPanelController {
                 capacity = Integer.parseInt(capacityText);
                 if (capacity <= 0) {
                     showAlert(Alert.AlertType.ERROR, "Validation Error", "Capacity must be greater than 0.");
+                    return;
+                }
+                if (capacity > 200) {
+                    showAlert(Alert.AlertType.ERROR, "Validation Error", "Capacity cannot exceed 200 seats.");
                     return;
                 }
             } catch (NumberFormatException e) {
@@ -335,6 +343,7 @@ public class AdminPanelController {
                 hasNewColumns = true;
             } catch (SQLException e) {
                 hasNewColumns = false;
+                System.out.println("New columns not found, using old schema: " + e.getMessage());
             }
 
             PreparedStatement ps;
@@ -361,12 +370,57 @@ public class AdminPanelController {
                 ps.setDouble(6, price);
             }
             
-            ps.executeUpdate();
-            showAlert(Alert.AlertType.INFORMATION, "Success", "Flight added successfully!");
-            clearFlightFields();
-            loadFlightsFromDatabase();
+            int rowsAffected = ps.executeUpdate();
+            if (rowsAffected > 0) {
+                // Get the inserted flight ID
+                int flightId = 0;
+                try (Statement stmt = conn.createStatement();
+                     ResultSet rs = stmt.executeQuery("SELECT LAST_INSERT_ID()")) {
+                    if (rs.next()) {
+                        flightId = rs.getInt(1);
+                    }
+                }
+                
+                // Create seats for the new flight if we have the flight ID
+                if (flightId > 0 && hasNewColumns) {
+                    createSeatsForFlight(conn, flightId, capacity);
+                }
+                
+                showAlert(Alert.AlertType.INFORMATION, "Success", "Flight added successfully!");
+                clearFlightFields();
+                loadFlightsFromDatabase();
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Error", "Failed to add flight.");
+            }
         } catch (SQLException e) {
             showAlert(Alert.AlertType.ERROR, "Database Error", e.getMessage());
+        }
+    }
+
+    private void createSeatsForFlight(Connection conn, int flightId, int capacity) throws SQLException {
+        // Calculate rows and seats per row based on capacity
+        int seatsPerRow = 4; // Default 4 seats per row
+        int rows = (int) Math.ceil((double) capacity / seatsPerRow);
+        
+        // Limit rows to reasonable number (A-Z = 26 rows max)
+        if (rows > 26) {
+            rows = 26;
+            seatsPerRow = (int) Math.ceil((double) capacity / rows);
+        }
+        
+        String[] rowLetters = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", 
+                              "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
+        
+        PreparedStatement ps = conn.prepareStatement(
+                "INSERT INTO seats (flight_id, seat_number, status) VALUES (?, ?, 'available')");
+        
+        for (int row = 0; row < rows; row++) {
+            for (int seat = 1; seat <= seatsPerRow; seat++) {
+                String seatNumber = rowLetters[row] + seat;
+                ps.setInt(1, flightId);
+                ps.setString(2, seatNumber);
+                ps.executeUpdate();
+            }
         }
     }
 
@@ -638,8 +692,10 @@ public class AdminPanelController {
             try (Statement checkStmt = conn.createStatement()) {
                 checkStmt.executeQuery("SELECT status FROM flights LIMIT 1");
                 hasStatusColumn = true;
+                System.out.println("Status column found in database");
             } catch (SQLException e) {
                 hasStatusColumn = false;
+                System.out.println("Status column NOT found in database: " + e.getMessage());
             }
 
             if (hasStatusColumn) {
@@ -648,14 +704,24 @@ public class AdminPanelController {
                 ps.setInt(2, flightId);
                 
                 int rowsAffected = ps.executeUpdate();
-                if (rowsAffected == 0) {
-                    showAlert(Alert.AlertType.ERROR, "Update Failed", "No flight was updated. Please try again.");
+                if (rowsAffected > 0) {
+                    System.out.println("Successfully updated flight " + flightId + " status to " + newStatus);
+                } else {
+                    showAlert(Alert.AlertType.ERROR, "Update Failed", "No flight was updated. Flight ID " + flightId + " may not exist.");
                 }
             } else {
-                showAlert(Alert.AlertType.WARNING, "Feature Not Available", "Status column not found in database. Please run the database update script.");
+                String errorMessage = "Status column not found in database!\n\n" +
+                    "Please run the database fix script:\n" +
+                    "1. Open your MySQL client\n" +
+                    "2. Execute: force_add_status_column.sql\n" +
+                    "3. Restart the application";
+                showAlert(Alert.AlertType.ERROR, "Database Schema Error", errorMessage);
             }
         } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Database Error", "Failed to update flight status: " + e.getMessage());
+            String errorMessage = "Failed to update flight status: " + e.getMessage() + "\n\n" +
+                "This usually means the status column is missing from the database.\n" +
+                "Please run the database fix script and restart the application.";
+            showAlert(Alert.AlertType.ERROR, "Database Error", errorMessage);
         }
     }
 

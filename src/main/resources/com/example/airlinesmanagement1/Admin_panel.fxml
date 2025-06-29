@@ -77,7 +77,7 @@
                                         <ComboBox fx:id="statusComboBox" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
 
                                         <Label text="Capacity:" GridPane.rowIndex="7" GridPane.columnIndex="0"/>
-                                        <TextField fx:id="capacityField" GridPane.rowIndex="7" GridPane.columnIndex="1"/>
+                                        <TextField fx:id="capacityField" promptText="28" GridPane.rowIndex="7" GridPane.columnIndex="1"/>
 
                                         <Button text="Add Flight" onAction="#handleAddFlight" GridPane.rowIndex="8" GridPane.columnIndex="0" GridPane.columnSpan="2" maxWidth="Infinity"/>
                                     </GridPane>
