@@ -8,96 +8,146 @@
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.example.airlinesmanagement1.AdminPanelController"
             stylesheets="@styles.css"
-            prefWidth="900" prefHeight="600">
+            prefWidth="1200" prefHeight="800">
 
     <top>
-        <Label text="Admin Panel - Manage Cities and Flights"
+        <Label text="Admin Panel - Advanced Flight Management"
                styleClass="header-label"
                BorderPane.alignment="CENTER"/>
     </top>
 
     <center>
-        <GridPane hgap="20" vgap="20">
-            <padding>
-                <Insets top="20" right="20" bottom="20" left="20"/>
-            </padding>
+        <ScrollPane fitToWidth="true" fitToHeight="true">
+            <VBox spacing="20">
+                <padding>
+                    <Insets top="20" right="20" bottom="20" left="20"/>
+                </padding>
 
-            <!-- City Management Section -->
-            <TitledPane text="Manage Cities" expanded="true" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                <content>
-                    <GridPane hgap="10" vgap="10">
-                        <padding>
-                            <Insets top="10" right="10" bottom="10" left="10"/>
-                        </padding>
+                <!-- City Management Section -->
+                <TitledPane text="Manage Cities" expanded="true">
+                    <content>
+                        <GridPane hgap="10" vgap="10">
+                            <padding>
+                                <Insets top="10" right="10" bottom="10" left="10"/>
+                            </padding>
 
-                        <TextField fx:id="cityNameField" promptText="Enter city name" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-                        <Button text="Add City" onAction="#handleAddCity" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                            <TextField fx:id="cityNameField" promptText="Enter city name" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                            <Button text="Add City" onAction="#handleAddCity" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
-                        <TableView fx:id="cityTable" prefHeight="150" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="2">
-                            <columns>
-                                <TableColumn fx:id="cityNameColumn" text="City Name" prefWidth="300"/>
-                            </columns>
-                        </TableView>
-                    </GridPane>
-                </content>
-            </TitledPane>
+                            <TableView fx:id="cityTable" prefHeight="150" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="2">
+                                <columns>
+                                    <TableColumn fx:id="cityNameColumn" text="City Name" prefWidth="300"/>
+                                </columns>
+                            </TableView>
+                        </GridPane>
+                    </content>
+                </TitledPane>
 
-            <!-- Flight Management Section -->
-            <TitledPane text="Manage Flights" expanded="true" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                <content>
-                    <GridPane hgap="10" vgap="10">
-                        <padding>
-                            <Insets top="10" right="10" bottom="10" left="10"/>
-                        </padding>
+                <!-- Flight Management Section -->
+                <TitledPane text="Manage Flights" expanded="true">
+                    <content>
+                        <VBox spacing="15">
+                            <!-- Add Flight Form -->
+                            <TitledPane text="Add New Flight" expanded="true">
+                                <content>
+                                    <GridPane hgap="10" vgap="10">
+                                        <padding>
+                                            <Insets top="10" right="10" bottom="10" left="10"/>
+                                        </padding>
 
-                        <Label text="Flight No:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                        <TextField fx:id="flightNumberField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                                        <Label text="Flight No:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                                        <TextField fx:id="flightNumberField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
-                        <Label text="From:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                        <TextField fx:id="fromCityField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                                        <Label text="From:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                                        <TextField fx:id="fromCityField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
-                        <Label text="To:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                        <TextField fx:id="toCityField" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                                        <Label text="To:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                                        <TextField fx:id="toCityField" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
 
-                        <Label text="Date:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-                        <DatePicker fx:id="flightDatePicker" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                                        <Label text="Date:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                                        <DatePicker fx:id="flightDatePicker" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
 
-                        <Label text="Time:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
-                        <TextField fx:id="departureTimeField" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                                        <Label text="Time:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                                        <TextField fx:id="departureTimeField" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
 
-                        <Label text="Price:" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
-                        <TextField fx:id="priceField" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+                                        <Label text="Price:" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+                                        <TextField fx:id="priceField" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
 
-                        <Button text="Add Flight" onAction="#handleAddFlight" GridPane.rowIndex="6" GridPane.columnIndex="0" GridPane.columnSpan="2" maxWidth="Infinity"/>
+                                        <Label text="Status:" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+                                        <ComboBox fx:id="statusComboBox" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
 
-                        <TableView fx:id="flightTable" prefHeight="200" GridPane.rowIndex="7" GridPane.columnIndex="0" GridPane.columnSpan="2">
-                            <columns>
-                                <TableColumn fx:id="flightNumberColumn" text="Flight No" prefWidth="100"/>
-                                <TableColumn fx:id="fromCityColumn" text="From" prefWidth="100"/>
-                                <TableColumn fx:id="toCityColumn" text="To" prefWidth="100"/>
-                                <TableColumn fx:id="flightDateColumn" text="Date" prefWidth="100"/>
-                                <TableColumn fx:id="departureTimeColumn" text="Time" prefWidth="100"/>
-                                <TableColumn fx:id="priceColumn" text="Price" prefWidth="100"/>
-                            </columns>
-                        </TableView>
-                    </GridPane>
-                </content>
-            </TitledPane>
+                                        <Label text="Capacity:" GridPane.rowIndex="7" GridPane.columnIndex="0"/>
+                                        <TextField fx:id="capacityField" GridPane.rowIndex="7" GridPane.columnIndex="1"/>
 
-            <!-- Chatbox Section -->
-            <TitledPane text="Chatbox" expanded="true" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="2">
-                <content>
-                    <GridPane hgap="10" vgap="10">
-                        <padding>
-                            <Insets top="10" right="10" bottom="10" left="10"/>
-                        </padding>
+                                        <Button text="Add Flight" onAction="#handleAddFlight" GridPane.rowIndex="8" GridPane.columnIndex="0" GridPane.columnSpan="2" maxWidth="Infinity"/>
+                                    </GridPane>
+                                </content>
+                            </TitledPane>
 
-                        <ListView fx:id="messageList" prefHeight="150" GridPane.rowIndex="0" GridPane.columnIndex="0" GridPane.columnSpan="2"/>
-                        <TextField fx:id="messageInput" promptText="Type a message..." GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                        <Button text="Send" onAction="#handleSendMessage" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
-                    </GridPane>
-                </content>
-            </TitledPane>
-        </GridPane>
+                            <!-- Search and Filter Section -->
+                            <TitledPane text="Search and Filter Flights" expanded="true">
+                                <content>
+                                    <GridPane hgap="10" vgap="10">
+                                        <padding>
+                                            <Insets top="10" right="10" bottom="10" left="10"/>
+                                        </padding>
+
+                                        <Label text="Search:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                                        <TextField fx:id="searchField" promptText="Search by flight number, from city, or to city" GridPane.rowIndex="0" GridPane.columnIndex="1" GridPane.columnSpan="2"/>
+
+                                        <Label text="Status Filter:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                                        <ComboBox fx:id="statusFilterComboBox" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                                        <Label text="Date Filter:" GridPane.rowIndex="1" GridPane.columnIndex="2"/>
+                                        <DatePicker fx:id="dateFilterPicker" GridPane.rowIndex="1" GridPane.columnIndex="3"/>
+
+                                        <Button text="Clear Filters" onAction="#handleClearFilters" GridPane.rowIndex="2" GridPane.columnIndex="0" GridPane.columnSpan="4" maxWidth="Infinity"/>
+                                    </GridPane>
+                                </content>
+                            </TitledPane>
+
+                            <!-- Flight Actions -->
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <Button fx:id="editFlightButton" text="Edit Flight" onAction="#handleEditFlight" disable="true"/>
+                                <Button fx:id="deleteFlightButton" text="Delete Flight" onAction="#handleDeleteFlight" disable="true"/>
+                                <Button fx:id="updateStatusButton" text="Update Status" onAction="#handleUpdateStatus" disable="true"/>
+                                <Button text="Refresh Data" onAction="#handleRefreshData"/>
+                            </HBox>
+
+                            <!-- Flight Table -->
+                            <TableView fx:id="flightTable" prefHeight="300">
+                                <columns>
+                                    <TableColumn fx:id="flightNumberColumn" text="Flight No" prefWidth="100"/>
+                                    <TableColumn fx:id="fromCityColumn" text="From" prefWidth="100"/>
+                                    <TableColumn fx:id="toCityColumn" text="To" prefWidth="100"/>
+                                    <TableColumn fx:id="flightDateColumn" text="Date" prefWidth="100"/>
+                                    <TableColumn fx:id="departureTimeColumn" text="Time" prefWidth="100"/>
+                                    <TableColumn fx:id="priceColumn" text="Price" prefWidth="80"/>
+                                    <TableColumn fx:id="statusColumn" text="Status" prefWidth="80"/>
+                                    <TableColumn fx:id="capacityColumn" text="Capacity" prefWidth="80"/>
+                                    <TableColumn fx:id="availableSeatsColumn" text="Available" prefWidth="80"/>
+                                    <TableColumn fx:id="loadFactorColumn" text="Load Factor" prefWidth="100"/>
+                                </columns>
+                            </TableView>
+                        </VBox>
+                    </content>
+                </TitledPane>
+
+                <!-- Chatbox Section -->
+                <TitledPane text="Customer Support Chat" expanded="true">
+                    <content>
+                        <GridPane hgap="10" vgap="10">
+                            <padding>
+                                <Insets top="10" right="10" bottom="10" left="10"/>
+                            </padding>
+
+                            <ListView fx:id="messageList" prefHeight="150" GridPane.rowIndex="0" GridPane.columnIndex="0" GridPane.columnSpan="2"/>
+                            <TextField fx:id="messageInput" promptText="Type a message..." GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                            <Button text="Send" onAction="#handleSendMessage" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                        </GridPane>
+                    </content>
+                </TitledPane>
+            </VBox>
+        </ScrollPane>
     </center>
 </BorderPane>
