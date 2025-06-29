@@ -1,53 +1,142 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane prefHeight="600.0" prefWidth="900.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.airlinesmanagement1.DashboardController">
+<BorderPane prefHeight="700.0" prefWidth="1200.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.airlinesmanagement1.DashboardController">
 
-   <!-- Sidebar with navigation buttons -->
+   <!-- Professional Sidebar -->
    <left>
-      <AnchorPane prefWidth="200.0" style="-fx-background-color: #4F67D6;">
+      <VBox prefWidth="280.0" styleClass="professional-sidebar">
          <children>
-            <VBox layoutX="10.0" layoutY="40.0" prefWidth="180.0" spacing="12.0">
+            <!-- Logo Section -->
+            <VBox styleClass="sidebar-header" alignment="CENTER" prefHeight="120.0">
                <children>
-                  <Button onAction="#goToFlightInfo" prefHeight="39.0" prefWidth="138.0" style="-fx-background-color: #6279E0;" styleClass="sidebar-button" text="Dashboard" />
-                  <Button onAction="#goToManageBookings" styleClass="sidebar-button" text="Book Flight" />
-                  <Button onAction="#goToManageFlight" styleClass="sidebar-button" text="Manage Flight" />
-                  <Button onAction="#goToBookingHistory" styleClass="sidebar-button" text="Ticket" />
-                  <Button onAction="#goToSupport" styleClass="sidebar-button" text="Support" />
-                  <Button onAction="#goToSettings" styleClass="sidebar-button" text="Rating" />
-                  <Button onAction="#handleLogout" styleClass="sidebar-button" text="Logout" />
+                  <Label text="✈️" style="-fx-font-size: 40px; -fx-text-fill: white;" />
+                  <Label text="AIRLINES" styleClass="sidebar-brand-text" />
+                  <Label text="MANAGEMENT" styleClass="sidebar-brand-subtext" />
+               </children>
+            </VBox>
+            
+            <!-- Navigation Menu -->
+            <VBox styleClass="sidebar-menu" spacing="8.0" alignment="TOP_CENTER">
+               <children>
+                  <Button onAction="#goToFlightInfo" styleClass="nav-button nav-button-active" text="📊 Dashboard" />
+                  <Button onAction="#goToManageBookings" styleClass="nav-button" text="✈️ Book Flight" />
+                  <Button onAction="#goToManageFlight" styleClass="nav-button" text="🔧 Manage Flight" />
+                  <Button onAction="#goToBookingHistory" styleClass="nav-button" text="🎫 My Tickets" />
+                  <Button onAction="#goToSupport" styleClass="nav-button" text="💬 Support" />
+                  <Button onAction="#goToSettings" styleClass="nav-button" text="⭐ Rating" />
+               </children>
+            </VBox>
+            
+            <!-- Logout Section -->
+            <VBox styleClass="sidebar-footer" alignment="CENTER" VBox.vgrow="ALWAYS">
+               <children>
+                  <Button onAction="#handleLogout" styleClass="logout-button" text="🚪 Logout" />
                </children>
             </VBox>
          </children>
-      </AnchorPane>
+      </VBox>
    </left>
 
-   <!-- Main content area -->
+   <!-- Main Content Area -->
    <center>
-      <AnchorPane>
+      <VBox styleClass="main-content" spacing="0.0">
          <children>
-            <Label fx:id="welcomeLabel" layoutX="100" layoutY="20" styleClass="dashboard-title" text="Welcome to the Dashboard!" />
-            <ImageView fx:id="dashboardImageView" fitHeight="400.0" fitWidth="500.0" layoutX="100.0" layoutY="80.0" preserveRatio="true">
-               <image>
-                  <Image url="@../../../../../../../../Downloads/Images/Dash.png" />
-               </image>
-            </ImageView>
+            <!-- Header Section -->
+            <HBox styleClass="dashboard-header" alignment="CENTER_LEFT" prefHeight="80.0">
+               <children>
+                  <VBox alignment="CENTER_LEFT" spacing="5.0">
+                     <children>
+                        <Label fx:id="welcomeLabel" styleClass="welcome-title" text="Welcome back!" />
+                        <Label styleClass="welcome-subtitle" text="Manage your flights and bookings efficiently" />
+                     </children>
+                  </VBox>
+                  <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label styleClass="current-time" text="🕐 " />
+                        <Label fx:id="timeLabel" styleClass="current-time" text="Current Time" />
+                     </children>
+                  </HBox>
+               </children>
+            </HBox>
+            
+            <!-- Dashboard Content -->
+            <ScrollPane styleClass="dashboard-scroll" fitToWidth="true" VBox.vgrow="ALWAYS">
+               <content>
+                  <VBox styleClass="dashboard-content" spacing="30.0" alignment="TOP_CENTER">
+                     <children>
+                        <!-- Quick Stats Cards -->
+                        <HBox styleClass="stats-container" spacing="20.0" alignment="CENTER">
+                           <children>
+                              <VBox styleClass="stat-card" alignment="CENTER" prefWidth="200.0" prefHeight="120.0">
+                                 <children>
+                                    <Label text="✈️" styleClass="stat-icon" />
+                                    <Label text="Available Flights" styleClass="stat-label" />
+                                    <Label fx:id="flightCountLabel" text="0" styleClass="stat-value" />
+                                 </children>
+                              </VBox>
+                              <VBox styleClass="stat-card" alignment="CENTER" prefWidth="200.0" prefHeight="120.0">
+                                 <children>
+                                    <Label text="🎫" styleClass="stat-icon" />
+                                    <Label text="My Bookings" styleClass="stat-label" />
+                                    <Label fx:id="bookingCountLabel" text="0" styleClass="stat-value" />
+                                 </children>
+                              </VBox>
+                              <VBox styleClass="stat-card" alignment="CENTER" prefWidth="200.0" prefHeight="120.0">
+                                 <children>
+                                    <Label text="⭐" styleClass="stat-icon" />
+                                    <Label text="My Ratings" styleClass="stat-label" />
+                                    <Label fx:id="ratingCountLabel" text="0" styleClass="stat-value" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+                        
+                        <!-- Main Dashboard Content -->
+                        <VBox styleClass="dashboard-image-container" alignment="CENTER">
+                           <children>
+                              <Label text="✈️" style="-fx-font-size: 120px; -fx-text-fill: #00BCF2;" />
+                              <Label text="Welcome to Airlines Management" styleClass="dashboard-image-caption" />
+                              <Label text="Your journey starts here" style="-fx-font-size: 14px; -fx-text-fill: #64748b;" />
+                           </children>
+                        </VBox>
+                        
+                        <!-- Quick Actions -->
+                        <VBox styleClass="quick-actions-container" alignment="CENTER" spacing="15.0">
+                           <children>
+                              <Label text="Quick Actions" styleClass="section-title" />
+                              <HBox styleClass="quick-actions-grid" spacing="15.0" alignment="CENTER">
+                                 <children>
+                                    <Button onAction="#goToManageBookings" styleClass="quick-action-button" text="Book New Flight" />
+                                    <Button onAction="#goToBookingHistory" styleClass="quick-action-button" text="View Tickets" />
+                                    <Button onAction="#goToSupport" styleClass="quick-action-button" text="Get Support" />
+                                    <Button onAction="#goToSettings" styleClass="quick-action-button" text="Rate Service" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </children>
+                  </VBox>
+               </content>
+            </ScrollPane>
          </children>
-      </AnchorPane>
+      </VBox>
    </center>
 
-   <!-- Footer -->
+   <!-- Professional Footer -->
    <bottom>
-      <HBox fx:id="footerBox" alignment="CENTER" prefHeight="50.0" styleClass="footer">
+      <HBox styleClass="professional-footer" alignment="CENTER" prefHeight="60.0">
          <children>
-            <Label styleClass="footer-label" text="✈️ Airlines Management System © 2025  |  Powered by Team Abdullah" />
+            <Label styleClass="footer-text" text="✈️ Airlines Management System © 2025" />
+            <Label styleClass="footer-divider" text="|" />
+            <Label styleClass="footer-text" text="Powered by Team Abdullah" />
+            <Label styleClass="footer-divider" text="|" />
+            <Label styleClass="footer-text" text="Version 2.0" />
          </children>
       </HBox>
    </bottom>

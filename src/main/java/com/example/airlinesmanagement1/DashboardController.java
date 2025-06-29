@@ -9,16 +9,21 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import javafx.animation.Timeline;
+import javafx.animation.KeyFrame;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 
 public class DashboardController implements Initializable {
@@ -27,7 +32,16 @@ public class DashboardController implements Initializable {
     private Label welcomeLabel;
 
     @FXML
-    private ImageView dashboardImageView;
+    private Label timeLabel;
+
+    @FXML
+    private Label flightCountLabel;
+
+    @FXML
+    private Label bookingCountLabel;
+
+    @FXML
+    private Label ratingCountLabel;
 
     @FXML
     private HBox footerBox;
@@ -39,6 +53,7 @@ public class DashboardController implements Initializable {
     private javafx.scene.control.Button adminPanelButton;
 
     private Scene currentScene;
+    private Timeline clockTimeline;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -49,19 +64,117 @@ public class DashboardController implements Initializable {
             System.out.println("Initialized currentScene successfully.");
         }
 
-        if (dashboardImageView != null) {
-            try {
-                dashboardImageView.setImage(
-                        new Image(new File("Images/Dash.png").toURI().toString())
-                );
-                System.out.println("Dashboard image loaded successfully.");
-            } catch (Exception e) {
-                System.err.println("Failed to load dashboard image: " + e.getMessage());
-            }
-        } else {
-            System.err.println("Warning: dashboardImageView is null. Check Dashboard.fxml for fx:id='dashboardImageView'.");
-        }
+        // Initialize dashboard components
+        initializeClock();
+        initializeStats();
+        initializeWelcomeMessage();
+        initializeFooterAnimation();
+    }
 
+    private void initializeClock() {
+        if (timeLabel != null) {
+            // Create a timeline that updates every second
+            clockTimeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
+                LocalDateTime now = LocalDateTime.now();
+                String formattedTime = now.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+                String formattedDate = now.format(DateTimeFormatter.ofPattern("dd MMM yyyy"));
+                timeLabel.setText(formattedTime + " | " + formattedDate);
+            }));
+            clockTimeline.setCycleCount(Timeline.INDEFINITE);
+            clockTimeline.play();
+        }
+    }
+
+    private void initializeStats() {
+        // Load statistics from database
+        loadFlightCount();
+        loadBookingCount();
+        loadRatingCount();
+    }
+
+    private void loadFlightCount() {
+        if (flightCountLabel != null) {
+            try {
+                DatabaseConnection dbConnection = new DatabaseConnection();
+                Connection conn = dbConnection.getConnection();
+                if (conn != null) {
+                    String query = "SELECT COUNT(*) as count FROM flights";
+                    PreparedStatement pstmt = conn.prepareStatement(query);
+                    ResultSet rs = pstmt.executeQuery();
+                    
+                    if (rs.next()) {
+                        int count = rs.getInt("count");
+                        flightCountLabel.setText(String.valueOf(count));
+                    }
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                System.err.println("Error loading flight count: " + e.getMessage());
+                flightCountLabel.setText("0");
+            }
+        }
+    }
+
+    private void loadBookingCount() {
+        if (bookingCountLabel != null) {
+            try {
+                DatabaseConnection dbConnection = new DatabaseConnection();
+                Connection conn = dbConnection.getConnection();
+                if (conn != null) {
+                    String query = "SELECT COUNT(*) as count FROM tickets WHERE user_name = ?";
+                    PreparedStatement pstmt = conn.prepareStatement(query);
+                    pstmt.setString(1, CurrentUser.getUsername());
+                    ResultSet rs = pstmt.executeQuery();
+                    
+                    if (rs.next()) {
+                        int count = rs.getInt("count");
+                        bookingCountLabel.setText(String.valueOf(count));
+                    }
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                System.err.println("Error loading booking count: " + e.getMessage());
+                bookingCountLabel.setText("0");
+            }
+        }
+    }
+
+    private void loadRatingCount() {
+        if (ratingCountLabel != null) {
+            try {
+                DatabaseConnection dbConnection = new DatabaseConnection();
+                Connection conn = dbConnection.getConnection();
+                if (conn != null) {
+                    String query = "SELECT COUNT(*) as count FROM ratings WHERE username = ?";
+                    PreparedStatement pstmt = conn.prepareStatement(query);
+                    pstmt.setString(1, CurrentUser.getUsername());
+                    ResultSet rs = pstmt.executeQuery();
+                    
+                    if (rs.next()) {
+                        int count = rs.getInt("count");
+                        ratingCountLabel.setText(String.valueOf(count));
+                    }
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                System.err.println("Error loading rating count: " + e.getMessage());
+                ratingCountLabel.setText("0");
+            }
+        }
+    }
+
+    private void initializeWelcomeMessage() {
+        if (welcomeLabel != null) {
+            String username = CurrentUser.getUsername();
+            if (username != null && !username.isEmpty()) {
+                welcomeLabel.setText("Welcome back, " + username + "!");
+            } else {
+                welcomeLabel.setText("Welcome back!");
+            }
+        }
+    }
+
+    private void initializeFooterAnimation() {
         if (footerBox != null) {
             FadeTransition ft = new FadeTransition(Duration.millis(1000), footerBox);
             ft.setFromValue(0);
@@ -144,6 +257,10 @@ public class DashboardController implements Initializable {
     @FXML
     private void handleLogout(ActionEvent event) {
         System.out.println("Logging out...");
+        // Stop the clock timeline
+        if (clockTimeline != null) {
+            clockTimeline.stop();
+        }
         loadScene(event, "Login.fxml", "Login Page");
     }
 
@@ -198,6 +315,20 @@ public class DashboardController implements Initializable {
     @FXML
     private void goToSettings(ActionEvent event) {
         System.out.println("Opening Rating and Feedback...");
-        openPopup(event, "Rating.fxml", "Rate Your Experience");
+        openPopup(event, "Rating.fxml", "Rate Our Service");
+    }
+
+    // Method to refresh dashboard stats
+    public void refreshStats() {
+        loadFlightCount();
+        loadBookingCount();
+        loadRatingCount();
+    }
+
+    // Method to stop clock when leaving dashboard
+    public void stopClock() {
+        if (clockTimeline != null) {
+            clockTimeline.stop();
+        }
     }
 }
