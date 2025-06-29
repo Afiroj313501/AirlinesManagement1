@@ -5,38 +5,42 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.Priority?>
 
-<BorderPane prefHeight="700.0" prefWidth="1200.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.airlinesmanagement1.DashboardController">
+<BorderPane prefHeight="700.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.airlinesmanagement1.DashboardController">
 
    <!-- Professional Sidebar -->
    <left>
-      <VBox prefWidth="280.0" styleClass="professional-sidebar">
+      <VBox prefWidth="250.0" style="-fx-background-color: #2c3e50;">
          <children>
             <!-- Logo Section -->
-            <VBox styleClass="sidebar-header" alignment="CENTER" prefHeight="120.0">
+            <VBox alignment="CENTER" prefHeight="100.0" style="-fx-padding: 20px; -fx-background-color: #34495e;">
                <children>
-                  <Label text="✈️" style="-fx-font-size: 40px; -fx-text-fill: white;" />
-                  <Label text="AIRLINES" styleClass="sidebar-brand-text" />
-                  <Label text="MANAGEMENT" styleClass="sidebar-brand-subtext" />
+                  <Label text="✈️" style="-fx-font-size: 32px;" />
+                  <Label text="AIRLINES" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #ffffff;" />
+                  <Label text="MANAGEMENT" style="-fx-font-size: 10px; -fx-text-fill: #bdc3c7;" />
                </children>
             </VBox>
             
             <!-- Navigation Menu -->
-            <VBox styleClass="sidebar-menu" spacing="8.0" alignment="TOP_CENTER">
+            <VBox spacing="8.0" alignment="TOP_CENTER" style="-fx-padding: 20px 15px;">
                <children>
-                  <Button onAction="#goToFlightInfo" styleClass="nav-button nav-button-active" text="📊 Dashboard" />
-                  <Button onAction="#goToManageBookings" styleClass="nav-button" text="✈️ Book Flight" />
-                  <Button onAction="#goToManageFlight" styleClass="nav-button" text="🔧 Manage Flight" />
-                  <Button onAction="#goToBookingHistory" styleClass="nav-button" text="🎫 My Tickets" />
-                  <Button onAction="#goToSupport" styleClass="nav-button" text="💬 Support" />
-                  <Button onAction="#goToSettings" styleClass="nav-button" text="⭐ Rating" />
+                  <Button onAction="#goToFlightInfo" text="📊 Dashboard" style="-fx-background-color: linear-gradient(to right, #00BCF2, #3498db); -fx-text-fill: #ffffff; -fx-font-weight: bold; -fx-background-radius: 8px; -fx-padding: 12px 20px; -fx-min-width: 200px; -fx-cursor: hand;" />
+                  <Button onAction="#goToManageBookings" text="✈️ Book Flight" style="-fx-background-color: rgba(255,255,255,0.1); -fx-text-fill: #ffffff; -fx-background-radius: 8px; -fx-padding: 12px 20px; -fx-min-width: 200px; -fx-cursor: hand;" />
+                  <Button onAction="#goToManageFlight" text="🔧 Manage Flight" style="-fx-background-color: rgba(255,255,255,0.1); -fx-text-fill: #ffffff; -fx-background-radius: 8px; -fx-padding: 12px 20px; -fx-min-width: 200px; -fx-cursor: hand;" />
+                  <Button onAction="#goToBookingHistory" text="🎫 My Tickets" style="-fx-background-color: rgba(255,255,255,0.1); -fx-text-fill: #ffffff; -fx-background-radius: 8px; -fx-padding: 12px 20px; -fx-min-width: 200px; -fx-cursor: hand;" />
+                  <Button onAction="#goToSupport" text="💬 Support" style="-fx-background-color: rgba(255,255,255,0.1); -fx-text-fill: #ffffff; -fx-background-radius: 8px; -fx-padding: 12px 20px; -fx-min-width: 200px; -fx-cursor: hand;" />
+                  <Button onAction="#goToSettings" text="⭐ Rating" style="-fx-background-color: rgba(255,255,255,0.1); -fx-text-fill: #ffffff; -fx-background-radius: 8px; -fx-padding: 12px 20px; -fx-min-width: 200px; -fx-cursor: hand;" />
                </children>
             </VBox>
             
             <!-- Logout Section -->
-            <VBox styleClass="sidebar-footer" alignment="CENTER" VBox.vgrow="ALWAYS">
+            <VBox alignment="CENTER" style="-fx-padding: 20px;">
+               <VBox.vgrow>
+                  <Priority fx:constant="ALWAYS"/>
+               </VBox.vgrow>
                <children>
-                  <Button onAction="#handleLogout" styleClass="logout-button" text="🚪 Logout" />
+                  <Button onAction="#handleLogout" text="🚪 Logout" style="-fx-background-color: linear-gradient(to right, #e74c3c, #c0392b); -fx-text-fill: #ffffff; -fx-font-weight: bold; -fx-background-radius: 8px; -fx-padding: 12px 20px; -fx-min-width: 200px; -fx-cursor: hand;" />
                </children>
             </VBox>
          </children>
@@ -45,79 +49,142 @@
 
    <!-- Main Content Area -->
    <center>
-      <VBox styleClass="main-content" spacing="0.0">
+      <VBox spacing="0.0" style="-fx-background-color: #ecf0f1;">
          <children>
             <!-- Header Section -->
-            <HBox styleClass="dashboard-header" alignment="CENTER_LEFT" prefHeight="80.0">
+            <HBox alignment="CENTER_LEFT" prefHeight="70.0" style="-fx-background-color: #ffffff; -fx-padding: 15px 25px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 3, 0, 0, 1);">
                <children>
-                  <VBox alignment="CENTER_LEFT" spacing="5.0">
+                  <VBox alignment="CENTER_LEFT" spacing="3.0">
                      <children>
-                        <Label fx:id="welcomeLabel" styleClass="welcome-title" text="Welcome back!" />
-                        <Label styleClass="welcome-subtitle" text="Manage your flights and bookings efficiently" />
+                        <Label fx:id="welcomeLabel" text="Welcome back!" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
+                        <Label text="Manage your flights and bookings efficiently" style="-fx-font-size: 14px; -fx-text-fill: #7f8c8d;" />
                      </children>
                   </VBox>
-                  <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+                  <HBox alignment="CENTER_RIGHT" spacing="15.0">
+                     <HBox.hgrow>
+                        <Priority fx:constant="ALWAYS"/>
+                     </HBox.hgrow>
                      <children>
-                        <Label styleClass="current-time" text="🕐 " />
-                        <Label fx:id="timeLabel" styleClass="current-time" text="Current Time" />
+                        <Button onAction="#refreshStats" text="🔄 Refresh" style="-fx-background-color: #3498db; -fx-text-fill: #ffffff; -fx-font-weight: bold; -fx-background-radius: 5px; -fx-padding: 8px 15px;" />
+                        <Label text="🕐 " style="-fx-font-size: 14px; -fx-text-fill: #7f8c8d;" />
+                        <Label fx:id="timeLabel" text="Current Time" style="-fx-font-size: 14px; -fx-text-fill: #7f8c8d;" />
                      </children>
                   </HBox>
                </children>
             </HBox>
             
             <!-- Dashboard Content -->
-            <ScrollPane styleClass="dashboard-scroll" fitToWidth="true" VBox.vgrow="ALWAYS">
+            <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
                <content>
-                  <VBox styleClass="dashboard-content" spacing="30.0" alignment="TOP_CENTER">
+                  <VBox spacing="25.0" alignment="TOP_CENTER" style="-fx-padding: 25px;">
                      <children>
                         <!-- Quick Stats Cards -->
-                        <HBox styleClass="stats-container" spacing="20.0" alignment="CENTER">
+                        <HBox spacing="20.0" alignment="CENTER">
                            <children>
-                              <VBox styleClass="stat-card" alignment="CENTER" prefWidth="200.0" prefHeight="120.0">
+                              <VBox alignment="CENTER" prefWidth="200.0" prefHeight="120.0" style="-fx-background-color: #ffffff; -fx-background-radius: 15px; -fx-padding: 25px;">
                                  <children>
-                                    <Label text="✈️" styleClass="stat-icon" />
-                                    <Label text="Available Flights" styleClass="stat-label" />
-                                    <Label fx:id="flightCountLabel" text="0" styleClass="stat-value" />
+                                    <Label text="✈️" style="-fx-font-size: 32px; -fx-text-fill: #3498db;" />
+                                    <Label text="Available Flights" style="-fx-font-size: 14px; -fx-text-fill: #64748b;" />
+                                    <Label fx:id="flightCountLabel" text="0" style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #3498db;" />
                                  </children>
                               </VBox>
-                              <VBox styleClass="stat-card" alignment="CENTER" prefWidth="200.0" prefHeight="120.0">
+                              <VBox alignment="CENTER" prefWidth="200.0" prefHeight="120.0" style="-fx-background-color: #ffffff; -fx-background-radius: 15px; -fx-padding: 25px;">
                                  <children>
-                                    <Label text="🎫" styleClass="stat-icon" />
-                                    <Label text="My Bookings" styleClass="stat-label" />
-                                    <Label fx:id="bookingCountLabel" text="0" styleClass="stat-value" />
+                                    <Label text="🎫" style="-fx-font-size: 32px; -fx-text-fill: #9b59b6;" />
+                                    <Label text="My Bookings" style="-fx-font-size: 14px; -fx-text-fill: #64748b;" />
+                                    <Label fx:id="bookingCountLabel" text="0" style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #9b59b6;" />
                                  </children>
                               </VBox>
-                              <VBox styleClass="stat-card" alignment="CENTER" prefWidth="200.0" prefHeight="120.0">
+                              <VBox alignment="CENTER" prefWidth="200.0" prefHeight="120.0" style="-fx-background-color: #ffffff; -fx-background-radius: 15px; -fx-padding: 25px;">
                                  <children>
-                                    <Label text="⭐" styleClass="stat-icon" />
-                                    <Label text="My Ratings" styleClass="stat-label" />
-                                    <Label fx:id="ratingCountLabel" text="0" styleClass="stat-value" />
+                                    <Label text="✅" style="-fx-font-size: 32px; -fx-text-fill: #27ae60;" />
+                                    <Label text="Completed Flights" style="-fx-font-size: 14px; -fx-text-fill: #64748b;" />
+                                    <Label fx:id="completedFlightsLabel" text="0" style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #27ae60;" />
                                  </children>
                               </VBox>
                            </children>
                         </HBox>
                         
-                        <!-- Main Dashboard Content -->
-                        <VBox styleClass="dashboard-image-container" alignment="CENTER">
+                        <!-- Flight Status Cards -->
+                        <HBox spacing="20.0" alignment="CENTER">
                            <children>
-                              <Label text="✈️" style="-fx-font-size: 120px; -fx-text-fill: #00BCF2;" />
-                              <Label text="Welcome to Airlines Management" styleClass="dashboard-image-caption" />
-                              <Label text="Your journey starts here" style="-fx-font-size: 14px; -fx-text-fill: #64748b;" />
+                              <VBox alignment="CENTER" prefWidth="200.0" prefHeight="120.0" style="-fx-background-color: #ffffff; -fx-background-radius: 15px; -fx-padding: 25px;">
+                                 <children>
+                                    <Label text="🔄" style="-fx-font-size: 32px; -fx-text-fill: #3498db;" />
+                                    <Label text="Upcoming Flights" style="-fx-font-size: 14px; -fx-text-fill: #64748b;" />
+                                    <Label fx:id="upcomingFlightsLabel" text="0" style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #3498db;" />
+                                 </children>
+                              </VBox>
+                              <VBox alignment="CENTER" prefWidth="200.0" prefHeight="120.0" style="-fx-background-color: #ffffff; -fx-background-radius: 15px; -fx-padding: 25px;">
+                                 <children>
+                                    <Label text="⏳" style="-fx-font-size: 32px; -fx-text-fill: #f39c12;" />
+                                    <Label text="Pending Flights" style="-fx-font-size: 14px; -fx-text-fill: #64748b;" />
+                                    <Label fx:id="pendingFlightsLabel" text="0" style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #f39c12;" />
+                                 </children>
+                              </VBox>
+                              <VBox alignment="CENTER" prefWidth="200.0" prefHeight="120.0" style="-fx-background-color: #ffffff; -fx-background-radius: 15px; -fx-padding: 25px;">
+                                 <children>
+                                    <Label text="❌" style="-fx-font-size: 32px; -fx-text-fill: #e74c3c;" />
+                                    <Label text="Cancelled Flights" style="-fx-font-size: 14px; -fx-text-fill: #64748b;" />
+                                    <Label fx:id="cancelledFlightsLabel" text="0" style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #e74c3c;" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+                        
+                        <!-- Flight Information Section -->
+                        <VBox alignment="CENTER" spacing="15.0">
+                           <children>
+                              <Label text="Flight Information" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+                              <HBox spacing="20.0" alignment="CENTER">
+                                 <children>
+                                    <VBox alignment="CENTER" prefWidth="250.0" prefHeight="150.0" style="-fx-background-color: #f1f5f9; -fx-background-radius: 10px; -fx-padding: 15px;">
+                                       <children>
+                                          <Label text="📅" style="-fx-font-size: 32px; -fx-text-fill: #3498db;" />
+                                          <Label text="Next Flight" style="-fx-font-size: 14px; -fx-text-fill: #64748b;" />
+                                          <Label fx:id="nextFlightLabel" text="No upcoming flights" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #3498db;" />
+                                       </children>
+                                    </VBox>
+                                    <VBox alignment="CENTER" prefWidth="250.0" prefHeight="150.0" style="-fx-background-color: #f1f5f9; -fx-background-radius: 10px; -fx-padding: 15px;">
+                                       <children>
+                                          <Label text="🎯" style="-fx-font-size: 32px; -fx-text-fill: #9b59b6;" />
+                                          <Label text="Total Flights" style="-fx-font-size: 14px; -fx-text-fill: #64748b;" />
+                                          <Label fx:id="totalFlightsLabel" text="0" style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #9b59b6;" />
+                                       </children>
+                                    </VBox>
+                                    <VBox alignment="CENTER" prefWidth="250.0" prefHeight="150.0" style="-fx-background-color: #f1f5f9; -fx-background-radius: 10px; -fx-padding: 15px;">
+                                       <children>
+                                          <Label text="💰" style="-fx-font-size: 32px; -fx-text-fill: #f39c12;" />
+                                          <Label text="Total Spent" style="-fx-font-size: 14px; -fx-text-fill: #64748b;" />
+                                          <Label fx:id="totalSpentLabel" text="BDT 0" style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #f39c12;" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </HBox>
                            </children>
                         </VBox>
                         
                         <!-- Quick Actions -->
-                        <VBox styleClass="quick-actions-container" alignment="CENTER" spacing="15.0">
+                        <VBox alignment="CENTER" spacing="15.0">
                            <children>
-                              <Label text="Quick Actions" styleClass="section-title" />
-                              <HBox styleClass="quick-actions-grid" spacing="15.0" alignment="CENTER">
+                              <Label text="Quick Actions" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
+                              <HBox spacing="15.0" alignment="CENTER">
                                  <children>
-                                    <Button onAction="#goToManageBookings" styleClass="quick-action-button" text="Book New Flight" />
-                                    <Button onAction="#goToBookingHistory" styleClass="quick-action-button" text="View Tickets" />
-                                    <Button onAction="#goToSupport" styleClass="quick-action-button" text="Get Support" />
-                                    <Button onAction="#goToSettings" styleClass="quick-action-button" text="Rate Service" />
+                                    <Button onAction="#goToManageBookings" text="Book New Flight" style="-fx-background-color: #3498db; -fx-text-fill: #ffffff; -fx-font-weight: bold; -fx-background-radius: 5px; -fx-padding: 10px 20px;" />
+                                    <Button onAction="#goToBookingHistory" text="View Tickets" style="-fx-background-color: #3498db; -fx-text-fill: #ffffff; -fx-font-weight: bold; -fx-background-radius: 5px; -fx-padding: 10px 20px;" />
+                                    <Button onAction="#goToSupport" text="Get Support" style="-fx-background-color: #3498db; -fx-text-fill: #ffffff; -fx-font-weight: bold; -fx-background-radius: 5px; -fx-padding: 10px 20px;" />
+                                    <Button onAction="#goToSettings" text="Rate Service" style="-fx-background-color: #3498db; -fx-text-fill: #ffffff; -fx-font-weight: bold; -fx-background-radius: 5px; -fx-padding: 10px 20px;" />
                                  </children>
                               </HBox>
+                           </children>
+                        </VBox>
+                        
+                        <!-- Welcome Section -->
+                        <VBox alignment="CENTER" spacing="10.0">
+                           <children>
+                              <Label text="✈️" style="-fx-font-size: 60px; -fx-text-fill: #3498db;" />
+                              <Label text="Welcome to Airlines Management" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
+                              <Label text="Your journey starts here" style="-fx-font-size: 14px; -fx-text-fill: #7f8c8d;" />
                            </children>
                         </VBox>
                      </children>
@@ -130,13 +197,13 @@
 
    <!-- Professional Footer -->
    <bottom>
-      <HBox styleClass="professional-footer" alignment="CENTER" prefHeight="60.0">
+      <HBox alignment="CENTER" prefHeight="50.0" style="-fx-background-color: #2c3e50;">
          <children>
-            <Label styleClass="footer-text" text="✈️ Airlines Management System © 2025" />
-            <Label styleClass="footer-divider" text="|" />
-            <Label styleClass="footer-text" text="Powered by Team Abdullah" />
-            <Label styleClass="footer-divider" text="|" />
-            <Label styleClass="footer-text" text="Version 2.0" />
+            <Label text="✈️ Airlines Management System © 2025" style="-fx-text-fill: #ecf0f1; -fx-font-size: 12px;" />
+            <Label text="|" style="-fx-text-fill: #ecf0f1; -fx-font-size: 12px;" />
+            <Label text="Powered by Team Abdullah" style="-fx-text-fill: #ecf0f1; -fx-font-size: 12px;" />
+            <Label text="|" style="-fx-text-fill: #ecf0f1; -fx-font-size: 12px;" />
+            <Label text="Version 2.0" style="-fx-text-fill: #ecf0f1; -fx-font-size: 12px;" />
          </children>
       </HBox>
    </bottom>

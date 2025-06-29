@@ -125,6 +125,24 @@
     -fx-font-weight: 500;
 }
 
+.refresh-button {
+    -fx-background-color: linear-gradient(to right, #00BCF2, #3498db);
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-padding: 8px 15px;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+    -fx-transition: all 0.3s ease;
+}
+
+.refresh-button:hover {
+    -fx-background-color: linear-gradient(to right, #00a8e6, #2980b9);
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+    -fx-effect: dropshadow(gaussian, rgba(0,188,242,0.4), 5, 0, 0, 2);
+}
+
 .dashboard-scroll {
     -fx-background-color: transparent;
     -fx-padding: 20px;
@@ -240,6 +258,46 @@
     -fx-scale-x: 1.05;
     -fx-scale-y: 1.05;
     -fx-effect: dropshadow(gaussian, rgba(0,188,242,0.4), 8, 0, 0, 3);
+}
+
+/* Flight Information Section */
+.flight-info-container {
+    -fx-padding: 30px;
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 20px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 15, 0, 0, 8);
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 20px;
+}
+
+.flight-info-grid {
+    -fx-padding: 10px 0;
+}
+
+.flight-info-card {
+    -fx-background-color: #f8fafc;
+    -fx-background-radius: 15px;
+    -fx-padding: 20px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 8, 0, 0, 4);
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 15px;
+    -fx-transition: all 0.3s ease;
+}
+
+.flight-info-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 12, 0, 0, 6);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+.flight-detail-text {
+    -fx-font-size: 14px;
+    -fx-text-fill: #64748b;
+    -fx-font-weight: 500;
+    -fx-text-alignment: center;
+    -fx-wrap-text: true;
 }
 
 /* Professional Footer */

@@ -41,7 +41,28 @@ public class DashboardController implements Initializable {
     private Label bookingCountLabel;
 
     @FXML
+    private Label completedFlightsLabel;
+
+    @FXML
+    private Label upcomingFlightsLabel;
+
+    @FXML
+    private Label pendingFlightsLabel;
+
+    @FXML
+    private Label cancelledFlightsLabel;
+
+    @FXML
     private Label ratingCountLabel;
+
+    @FXML
+    private Label nextFlightLabel;
+
+    @FXML
+    private Label totalFlightsLabel;
+
+    @FXML
+    private Label totalSpentLabel;
 
     @FXML
     private HBox footerBox;
@@ -89,7 +110,13 @@ public class DashboardController implements Initializable {
         // Load statistics from database
         loadFlightCount();
         loadBookingCount();
-        loadRatingCount();
+        loadCompletedFlights();
+        loadUpcomingFlights();
+        loadPendingFlights();
+        loadCancelledFlights();
+        loadNextFlight();
+        loadTotalFlights();
+        loadTotalSpent();
     }
 
     private void loadFlightCount() {
@@ -121,14 +148,21 @@ public class DashboardController implements Initializable {
                 DatabaseConnection dbConnection = new DatabaseConnection();
                 Connection conn = dbConnection.getConnection();
                 if (conn != null) {
-                    String query = "SELECT COUNT(*) as count FROM tickets WHERE user_name = ?";
-                    PreparedStatement pstmt = conn.prepareStatement(query);
-                    pstmt.setString(1, CurrentUser.getUsername());
-                    ResultSet rs = pstmt.executeQuery();
-                    
-                    if (rs.next()) {
-                        int count = rs.getInt("count");
-                        bookingCountLabel.setText(String.valueOf(count));
+                    String currentUser = Session.getInstance().getUsername();
+                    if (currentUser != null && !currentUser.isEmpty()) {
+                        String query = "SELECT COUNT(*) as count FROM tickets WHERE user_name = ?";
+                        PreparedStatement pstmt = conn.prepareStatement(query);
+                        pstmt.setString(1, currentUser);
+                        ResultSet rs = pstmt.executeQuery();
+                        
+                        if (rs.next()) {
+                            int count = rs.getInt("count");
+                            bookingCountLabel.setText(String.valueOf(count));
+                            System.out.println("Found " + count + " bookings for user: " + currentUser);
+                        }
+                    } else {
+                        bookingCountLabel.setText("0");
+                        System.out.println("No user logged in for booking count");
                     }
                     conn.close();
                 }
@@ -139,20 +173,167 @@ public class DashboardController implements Initializable {
         }
     }
 
+    private void loadCompletedFlights() {
+        if (completedFlightsLabel != null) {
+            try {
+                DatabaseConnection dbConnection = new DatabaseConnection();
+                Connection conn = dbConnection.getConnection();
+                if (conn != null) {
+                    String currentUser = Session.getInstance().getUsername();
+                    if (currentUser != null && !currentUser.isEmpty()) {
+                        // Count flights that are completed (past date or status = completed)
+                        String query = "SELECT COUNT(DISTINCT t.flight_id) as count " +
+                                     "FROM tickets t " +
+                                     "JOIN flights f ON t.flight_id = f.flight_id " +
+                                     "WHERE t.user_name = ? AND (f.flight_date < CURDATE() OR f.status = 'completed')";
+                        PreparedStatement pstmt = conn.prepareStatement(query);
+                        pstmt.setString(1, currentUser);
+                        ResultSet rs = pstmt.executeQuery();
+                        
+                        if (rs.next()) {
+                            int count = rs.getInt("count");
+                            completedFlightsLabel.setText(String.valueOf(count));
+                            System.out.println("Found " + count + " completed flights for user: " + currentUser);
+                        }
+                    } else {
+                        completedFlightsLabel.setText("0");
+                        System.out.println("No user logged in for completed flights");
+                    }
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                System.err.println("Error loading completed flights: " + e.getMessage());
+                completedFlightsLabel.setText("0");
+            }
+        }
+    }
+
+    private void loadUpcomingFlights() {
+        if (upcomingFlightsLabel != null) {
+            try {
+                DatabaseConnection dbConnection = new DatabaseConnection();
+                Connection conn = dbConnection.getConnection();
+                if (conn != null) {
+                    String currentUser = Session.getInstance().getUsername();
+                    if (currentUser != null && !currentUser.isEmpty()) {
+                        // Count flights that are upcoming (future date and not cancelled)
+                        String query = "SELECT COUNT(DISTINCT t.flight_id) as count " +
+                                     "FROM tickets t " +
+                                     "JOIN flights f ON t.flight_id = f.flight_id " +
+                                     "WHERE t.user_name = ? AND f.flight_date > CURDATE() AND f.status != 'cancelled'";
+                        PreparedStatement pstmt = conn.prepareStatement(query);
+                        pstmt.setString(1, currentUser);
+                        ResultSet rs = pstmt.executeQuery();
+                        
+                        if (rs.next()) {
+                            int count = rs.getInt("count");
+                            upcomingFlightsLabel.setText(String.valueOf(count));
+                            System.out.println("Found " + count + " upcoming flights for user: " + currentUser);
+                        }
+                    } else {
+                        upcomingFlightsLabel.setText("0");
+                        System.out.println("No user logged in for upcoming flights");
+                    }
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                System.err.println("Error loading upcoming flights: " + e.getMessage());
+                upcomingFlightsLabel.setText("0");
+            }
+        }
+    }
+
+    private void loadPendingFlights() {
+        if (pendingFlightsLabel != null) {
+            try {
+                DatabaseConnection dbConnection = new DatabaseConnection();
+                Connection conn = dbConnection.getConnection();
+                if (conn != null) {
+                    String currentUser = Session.getInstance().getUsername();
+                    if (currentUser != null && !currentUser.isEmpty()) {
+                        // Count flights that are pending (today's date or status = pending)
+                        String query = "SELECT COUNT(DISTINCT t.flight_id) as count " +
+                                     "FROM tickets t " +
+                                     "JOIN flights f ON t.flight_id = f.flight_id " +
+                                     "WHERE t.user_name = ? AND (f.flight_date = CURDATE() OR f.status = 'pending')";
+                        PreparedStatement pstmt = conn.prepareStatement(query);
+                        pstmt.setString(1, currentUser);
+                        ResultSet rs = pstmt.executeQuery();
+                        
+                        if (rs.next()) {
+                            int count = rs.getInt("count");
+                            pendingFlightsLabel.setText(String.valueOf(count));
+                            System.out.println("Found " + count + " pending flights for user: " + currentUser);
+                        }
+                    } else {
+                        pendingFlightsLabel.setText("0");
+                        System.out.println("No user logged in for pending flights");
+                    }
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                System.err.println("Error loading pending flights: " + e.getMessage());
+                pendingFlightsLabel.setText("0");
+            }
+        }
+    }
+
+    private void loadCancelledFlights() {
+        if (cancelledFlightsLabel != null) {
+            try {
+                DatabaseConnection dbConnection = new DatabaseConnection();
+                Connection conn = dbConnection.getConnection();
+                if (conn != null) {
+                    String currentUser = Session.getInstance().getUsername();
+                    if (currentUser != null && !currentUser.isEmpty()) {
+                        // Count flights that are cancelled (status = cancelled)
+                        String query = "SELECT COUNT(DISTINCT t.flight_id) as count " +
+                                     "FROM tickets t " +
+                                     "JOIN flights f ON t.flight_id = f.flight_id " +
+                                     "WHERE t.user_name = ? AND f.status = 'cancelled'";
+                        PreparedStatement pstmt = conn.prepareStatement(query);
+                        pstmt.setString(1, currentUser);
+                        ResultSet rs = pstmt.executeQuery();
+                        
+                        if (rs.next()) {
+                            int count = rs.getInt("count");
+                            cancelledFlightsLabel.setText(String.valueOf(count));
+                            System.out.println("Found " + count + " cancelled flights for user: " + currentUser);
+                        }
+                    } else {
+                        cancelledFlightsLabel.setText("0");
+                        System.out.println("No user logged in for cancelled flights");
+                    }
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                System.err.println("Error loading cancelled flights: " + e.getMessage());
+                cancelledFlightsLabel.setText("0");
+            }
+        }
+    }
+
     private void loadRatingCount() {
         if (ratingCountLabel != null) {
             try {
                 DatabaseConnection dbConnection = new DatabaseConnection();
                 Connection conn = dbConnection.getConnection();
                 if (conn != null) {
-                    String query = "SELECT COUNT(*) as count FROM ratings WHERE username = ?";
-                    PreparedStatement pstmt = conn.prepareStatement(query);
-                    pstmt.setString(1, CurrentUser.getUsername());
-                    ResultSet rs = pstmt.executeQuery();
-                    
-                    if (rs.next()) {
-                        int count = rs.getInt("count");
-                        ratingCountLabel.setText(String.valueOf(count));
+                    String currentUser = Session.getInstance().getUsername();
+                    if (currentUser != null && !currentUser.isEmpty()) {
+                        String query = "SELECT COUNT(*) as count FROM ratings WHERE username = ?";
+                        PreparedStatement pstmt = conn.prepareStatement(query);
+                        pstmt.setString(1, currentUser);
+                        ResultSet rs = pstmt.executeQuery();
+                        
+                        if (rs.next()) {
+                            int count = rs.getInt("count");
+                            ratingCountLabel.setText(String.valueOf(count));
+                            System.out.println("Found " + count + " ratings for user: " + currentUser);
+                        }
+                    } else {
+                        ratingCountLabel.setText("0");
+                        System.out.println("No user logged in for rating count");
                     }
                     conn.close();
                 }
@@ -165,7 +346,7 @@ public class DashboardController implements Initializable {
 
     private void initializeWelcomeMessage() {
         if (welcomeLabel != null) {
-            String username = CurrentUser.getUsername();
+            String username = Session.getInstance().getUsername();
             if (username != null && !username.isEmpty()) {
                 welcomeLabel.setText("Welcome back, " + username + "!");
             } else {
@@ -318,17 +499,150 @@ public class DashboardController implements Initializable {
         openPopup(event, "Rating.fxml", "Rate Our Service");
     }
 
+    @FXML
+    private void refreshStats(ActionEvent event) {
+        System.out.println("Manual refresh requested...");
+        refreshStats();
+    }
+
     // Method to refresh dashboard stats
     public void refreshStats() {
         loadFlightCount();
         loadBookingCount();
-        loadRatingCount();
+        loadCompletedFlights();
+        loadUpcomingFlights();
+        loadPendingFlights();
+        loadCancelledFlights();
+        loadNextFlight();
+        loadTotalFlights();
+        loadTotalSpent();
+    }
+
+    // Method to refresh stats when dashboard is shown
+    public void onDashboardShown() {
+        System.out.println("Dashboard shown - refreshing stats...");
+        refreshStats();
     }
 
     // Method to stop clock when leaving dashboard
     public void stopClock() {
         if (clockTimeline != null) {
             clockTimeline.stop();
+        }
+    }
+
+    private void loadNextFlight() {
+        if (nextFlightLabel != null) {
+            try {
+                DatabaseConnection dbConnection = new DatabaseConnection();
+                Connection conn = dbConnection.getConnection();
+                if (conn != null) {
+                    String currentUser = Session.getInstance().getUsername();
+                    if (currentUser != null && !currentUser.isEmpty()) {
+                        // Get the next upcoming flight
+                        String query = "SELECT f.flight_number, f.from_city, f.to_city, f.flight_date " +
+                                     "FROM tickets t " +
+                                     "JOIN flights f ON t.flight_id = f.flight_id " +
+                                     "WHERE t.user_name = ? AND f.flight_date >= CURDATE() " +
+                                     "ORDER BY f.flight_date ASC LIMIT 1";
+                        PreparedStatement pstmt = conn.prepareStatement(query);
+                        pstmt.setString(1, currentUser);
+                        ResultSet rs = pstmt.executeQuery();
+                        
+                        if (rs.next()) {
+                            String flightNumber = rs.getString("flight_number");
+                            String fromCity = rs.getString("from_city");
+                            String toCity = rs.getString("to_city");
+                            String flightDate = rs.getDate("flight_date").toString();
+                            nextFlightLabel.setText(flightNumber + "\n" + fromCity + " → " + toCity + "\n" + flightDate);
+                            System.out.println("Next flight: " + flightNumber + " on " + flightDate);
+                        } else {
+                            nextFlightLabel.setText("No upcoming flights");
+                            System.out.println("No upcoming flights found for user: " + currentUser);
+                        }
+                    } else {
+                        nextFlightLabel.setText("No upcoming flights");
+                        System.out.println("No user logged in for next flight");
+                    }
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                System.err.println("Error loading next flight: " + e.getMessage());
+                nextFlightLabel.setText("No upcoming flights");
+            }
+        }
+    }
+
+    private void loadTotalFlights() {
+        if (totalFlightsLabel != null) {
+            try {
+                DatabaseConnection dbConnection = new DatabaseConnection();
+                Connection conn = dbConnection.getConnection();
+                if (conn != null) {
+                    String currentUser = Session.getInstance().getUsername();
+                    if (currentUser != null && !currentUser.isEmpty()) {
+                        // Count total unique flights user has booked
+                        String query = "SELECT COUNT(DISTINCT t.flight_id) as count " +
+                                     "FROM tickets t " +
+                                     "WHERE t.user_name = ?";
+                        PreparedStatement pstmt = conn.prepareStatement(query);
+                        pstmt.setString(1, currentUser);
+                        ResultSet rs = pstmt.executeQuery();
+                        
+                        if (rs.next()) {
+                            int count = rs.getInt("count");
+                            totalFlightsLabel.setText(String.valueOf(count));
+                            System.out.println("Total flights for user: " + currentUser + " = " + count);
+                        }
+                    } else {
+                        totalFlightsLabel.setText("0");
+                        System.out.println("No user logged in for total flights");
+                    }
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                System.err.println("Error loading total flights: " + e.getMessage());
+                totalFlightsLabel.setText("0");
+            }
+        }
+    }
+
+    private void loadTotalSpent() {
+        if (totalSpentLabel != null) {
+            try {
+                DatabaseConnection dbConnection = new DatabaseConnection();
+                Connection conn = dbConnection.getConnection();
+                if (conn != null) {
+                    String currentUser = Session.getInstance().getUsername();
+                    if (currentUser != null && !currentUser.isEmpty()) {
+                        // Calculate total amount spent on tickets
+                        String query = "SELECT SUM(t.price) as total " +
+                                     "FROM tickets t " +
+                                     "WHERE t.user_name = ?";
+                        PreparedStatement pstmt = conn.prepareStatement(query);
+                        pstmt.setString(1, currentUser);
+                        ResultSet rs = pstmt.executeQuery();
+                        
+                        if (rs.next()) {
+                            double total = rs.getDouble("total");
+                            if (total > 0) {
+                                totalSpentLabel.setText("BDT " + String.format("%.2f", total));
+                                System.out.println("Total spent by user: " + currentUser + " = BDT " + total);
+                            } else {
+                                totalSpentLabel.setText("BDT 0");
+                                System.out.println("No spending found for user: " + currentUser);
+                            }
+                        }
+                    } else {
+                        totalSpentLabel.setText("BDT 0");
+                        System.out.println("No user logged in for total spent");
+                    }
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                System.err.println("Error loading total spent: " + e.getMessage());
+                totalSpentLabel.setText("BDT 0");
+            }
         }
     }
 }
