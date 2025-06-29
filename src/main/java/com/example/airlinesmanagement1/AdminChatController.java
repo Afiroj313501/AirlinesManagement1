@@ -57,12 +57,24 @@ public class AdminChatController {
 
     private void connectToServer() {
         try {
-            socket = new Socket("localhost", 5001);
+            socket = new Socket("localhost", 5000);
             out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-            // Send admin name to server
-            out.println(adminName);
+            // Handle name submission protocol properly
+            String serverResponse;
+            while ((serverResponse = in.readLine()) != null) {
+                if (serverResponse.equals("SUBMITNAME")) {
+                    out.println(adminName);
+                } else if (serverResponse.startsWith("NAMEACCEPTED")) {
+                    Platform.runLater(() -> chatArea.appendText("Connected as " + adminName + "\n"));
+                    break;
+                } else if (serverResponse.equals("NAMETAKEN")) {
+                    Platform.runLater(() -> chatArea.appendText("Admin name taken, trying with different name\n"));
+                    String newAdminName = "Admin" + new java.util.Random().nextInt(100);
+                    out.println(newAdminName);
+                }
+            }
         } catch (IOException e) {
             Platform.runLater(() -> chatArea.appendText("Error connecting to server: " + e.getMessage() + "\n"));
         }
@@ -72,11 +84,7 @@ public class AdminChatController {
         try {
             String message;
             while ((message = in.readLine()) != null) {
-                if (message.startsWith("SUBMITNAME")) {
-                    out.println(adminName);
-                } else if (message.startsWith("NAMEACCEPTED")) {
-                    Platform.runLater(() -> chatArea.appendText("Connected as " + adminName + "\n"));
-                } else if (message.startsWith("MESSAGE")) {
+                if (message.startsWith("MESSAGE")) {
                     String finalMessage = message.substring(8); // Remove "MESSAGE " prefix
                     Platform.runLater(() -> chatArea.appendText(finalMessage + "\n"));
                 } else if (message.startsWith("PRIVATE")) {
@@ -94,6 +102,9 @@ public class AdminChatController {
                             }
                         }
                     });
+                } else if (message.startsWith("ERROR")) {
+                    String errorMessage = message.substring(6); // Remove "ERROR " prefix
+                    Platform.runLater(() -> chatArea.appendText("[ERROR] " + errorMessage + "\n"));
                 }
             }
         } catch (IOException e) {
