@@ -1,11 +1,112 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.BorderPane?>
 
-<AnchorPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.airlinesmanagement1.SeatSelectionController"
-            prefHeight="400.0" prefWidth="600.0">
-    <GridPane fx:id="seatGrid" layoutX="50.0" layoutY="50.0" hgap="10" vgap="10"
-              AnchorPane.topAnchor="20.0" AnchorPane.leftAnchor="20.0"
-              AnchorPane.rightAnchor="20.0" AnchorPane.bottomAnchor="20.0" />
-</AnchorPane>
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.airlinesmanagement1.SeatSelectionController"
+            prefHeight="500.0" prefWidth="700.0" style="-fx-background-color: #ecf0f1;">
+
+   <!-- Header Section -->
+   <top>
+      <VBox style="-fx-background-color: #ffffff; -fx-padding: 10px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 2, 0, 0, 1);">
+         <children>
+            <Label text="✈️ Seat Selection" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
+            <Label text="Choose your preferred seats for the flight" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;" />
+         </children>
+      </VBox>
+   </top>
+
+   <!-- Main Content -->
+   <center>
+      <VBox spacing="10.0" style="-fx-padding: 15px;">
+         <children>
+            <!-- Flight Info Section -->
+            <HBox alignment="CENTER" spacing="20.0" style="-fx-background-color: #ffffff; -fx-background-radius: 8px; -fx-padding: 12px;">
+               <children>
+                  <VBox alignment="CENTER" spacing="2.0">
+                     <Label text="From" style="-fx-font-size: 10px; -fx-text-fill: #7f8c8d;" />
+                     <Label fx:id="fromCityLabel" text="City" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
+                  </VBox>
+                  <Label text="→" style="-fx-font-size: 16px; -fx-text-fill: #3498db;" />
+                  <VBox alignment="CENTER" spacing="2.0">
+                     <Label text="To" style="-fx-font-size: 10px; -fx-text-fill: #7f8c8d;" />
+                     <Label fx:id="toCityLabel" text="City" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
+                  </VBox>
+                  <Label text="|" style="-fx-font-size: 16px; -fx-text-fill: #bdc3c7;" />
+                  <VBox alignment="CENTER" spacing="2.0">
+                     <Label text="Date" style="-fx-font-size: 10px; -fx-text-fill: #7f8c8d;" />
+                     <Label fx:id="dateLabel" text="Date" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
+                  </VBox>
+                  <Label text="|" style="-fx-font-size: 16px; -fx-text-fill: #bdc3c7;" />
+                  <VBox alignment="CENTER" spacing="2.0">
+                     <Label text="Price per Seat" style="-fx-font-size: 10px; -fx-text-fill: #7f8c8d;" />
+                     <Label fx:id="priceLabel" text="BDT 0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #f39c12;" />
+                  </VBox>
+               </children>
+            </HBox>
+
+            <!-- Seat Layout Section -->
+            <VBox spacing="8.0" style="-fx-background-color: #ffffff; -fx-background-radius: 8px; -fx-padding: 15px;">
+               <children>
+                  <Label text="🪑 Seat Layout" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
+                  
+                  <!-- Seat Grid Container -->
+                  <VBox alignment="CENTER" style="-fx-padding: 10px;">
+                     <GridPane fx:id="seatGrid" hgap="8" vgap="8" style="-fx-background-color: #f8f9fa; -fx-background-radius: 6px; -fx-padding: 12px;" />
+                  </VBox>
+
+                  <!-- Seat Legend -->
+                  <HBox alignment="CENTER" spacing="20.0">
+                     <children>
+                        <HBox alignment="CENTER" spacing="5.0">
+                           <Label text="●" style="-fx-font-size: 14px; -fx-text-fill: #3498db;" />
+                           <Label text="Available" style="-fx-font-size: 11px; -fx-text-fill: #7f8c8d;" />
+                        </HBox>
+                        <HBox alignment="CENTER" spacing="5.0">
+                           <Label text="●" style="-fx-font-size: 14px; -fx-text-fill: #27ae60;" />
+                           <Label text="Selected" style="-fx-font-size: 11px; -fx-text-fill: #7f8c8d;" />
+                        </HBox>
+                        <HBox alignment="CENTER" spacing="5.0">
+                           <Label text="●" style="-fx-font-size: 14px; -fx-text-fill: #95a5a6;" />
+                           <Label text="Booked" style="-fx-font-size: 11px; -fx-text-fill: #7f8c8d;" />
+                        </HBox>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+
+            <!-- Summary Section -->
+            <HBox alignment="CENTER" spacing="20.0" style="-fx-background-color: #ffffff; -fx-background-radius: 8px; -fx-padding: 12px;">
+               <children>
+                  <VBox alignment="CENTER" spacing="2.0">
+                     <Label text="Selected Seats" style="-fx-font-size: 10px; -fx-text-fill: #7f8c8d;" />
+                     <Label fx:id="seatCountLabel" text="0" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #3498db;" />
+                  </VBox>
+                  <Label text="|" style="-fx-font-size: 16px; -fx-text-fill: #bdc3c7;" />
+                  <VBox alignment="CENTER" spacing="2.0">
+                     <Label text="Total Price" style="-fx-font-size: 10px; -fx-text-fill: #7f8c8d;" />
+                     <Label fx:id="totalPriceLabel" text="BDT 0" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #f39c12;" />
+                  </VBox>
+                  <Label text="|" style="-fx-font-size: 16px; -fx-text-fill: #bdc3c7;" />
+                  <Button fx:id="paymentButton" text="💳 Proceed to Payment" style="-fx-background-color: #3498db; -fx-text-fill: #ffffff; -fx-font-weight: bold; -fx-background-radius: 6px; -fx-padding: 8px 20px; -fx-font-size: 12px;" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </center>
+
+   <!-- Footer -->
+   <bottom>
+      <HBox alignment="CENTER" style="-fx-background-color: #2c3e50; -fx-padding: 8px;">
+         <children>
+            <Label text="✈️ Airlines Management System - Seat Selection" style="-fx-text-fill: #ecf0f1; -fx-font-size: 10px;" />
+         </children>
+      </HBox>
+   </bottom>
+
+</BorderPane>

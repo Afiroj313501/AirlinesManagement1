@@ -90,6 +90,9 @@ public class DashboardController implements Initializable {
         initializeStats();
         initializeWelcomeMessage();
         initializeFooterAnimation();
+        
+        // Check if user is admin and show admin panel button
+        checkAdminStatus();
     }
 
     private void initializeClock() {
@@ -489,8 +492,31 @@ public class DashboardController implements Initializable {
 
     @FXML
     private void goToSupport(ActionEvent event) {
-        System.out.println("Opening Support popup...");
-        openPopup(event, "Support.fxml", "Customer Support Chat");
+        System.out.println("Opening ChatBot Support...");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/airlinesmanagement1/ChatBot.fxml"));
+            Scene scene = new Scene(loader.load());
+            ChatBotController controller = loader.getController();
+            
+            // Set username for the chat
+            String currentUser = Session.getInstance().getUsername();
+            if (currentUser != null && !currentUser.isEmpty()) {
+                controller.setUsername(currentUser);
+            } else {
+                controller.setUsername("User" + (int)(Math.random() * 1000));
+            }
+            
+            // Set previous scene for back navigation
+            controller.setPreviousScene(currentScene);
+            
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(scene);
+            stage.setTitle("Airlines Support Chat");
+            stage.show();
+        } catch (IOException e) {
+            System.err.println("Error loading ChatBot.fxml: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -643,6 +669,32 @@ public class DashboardController implements Initializable {
                 System.err.println("Error loading total spent: " + e.getMessage());
                 totalSpentLabel.setText("BDT 0");
             }
+        }
+    }
+
+    private void checkAdminStatus() {
+        String currentUser = Session.getInstance().getUsername();
+        if (currentUser != null && "admin".equalsIgnoreCase(currentUser)) {
+            if (adminPanelButton != null) {
+                adminPanelButton.setVisible(true);
+                System.out.println("Admin user detected - showing admin panel button");
+            }
+        }
+    }
+
+    @FXML
+    private void goToAdminPanel(ActionEvent event) {
+        System.out.println("Navigating to Admin Panel...");
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/airlinesmanagement1/Admin_panel.fxml"));
+            Scene scene = new Scene(fxmlLoader.load());
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(scene);
+            stage.setTitle("Admin Panel - Airlines Management");
+            stage.show();
+        } catch (IOException e) {
+            System.err.println("Error loading Admin_panel.fxml: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }

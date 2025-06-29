@@ -122,9 +122,6 @@ public class AdminPanelController {
 
         // Setup table selection
         setupTableSelection();
-
-        // Initialize chat connection
-        initializeChat();
     }
 
     private void setupDateValidation() {
@@ -190,77 +187,26 @@ public class AdminPanelController {
         });
     }
 
-    private void initializeChat() {
-        try {
-            socket = new Socket("localhost", 5001);
-            out = new PrintWriter(socket.getOutputStream(), true);
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
-            // Handle name submission loop
-            new Thread(() -> {
-                try {
-                    receiveMessages();
-                } catch (IOException e) {
-                    System.err.println("Admin chat connection error: " + e.getMessage());
-                    // Don't show alert for connection errors to avoid blocking the UI
-                } catch (Exception e) {
-                    System.err.println("Admin chat unexpected error: " + e.getMessage());
-                }
-            }).start();
-        } catch (IOException e) {
-            System.err.println("Admin failed to connect to chat server: " + e.getMessage());
-            // Don't show alert to avoid blocking the UI
-        }
-    }
-
-    private void receiveMessages() throws IOException {
-        String message;
-        while ((message = in.readLine()) != null) {
-            System.out.println("Admin received: " + message); // Debug log
-            if (message.equals("SUBMITNAME")) {
-                System.out.println("Submitting name: Admin");
-                out.println("Admin");
-            } else if (message.startsWith("NAMEACCEPTED")) {
-                Platform.runLater(() -> {
-                    messageList.getItems().add("Connected as Admin");
-                    System.out.println("UI updated with: Connected as Admin"); // Confirm UI update
-                });
-                break;
-            } else if (message.equals("NAMETAKEN")) {
-                System.out.println("Admin name taken, this shouldn't happen");
-                return;
-            }
-        }
-
-        // Now listen for chat messages
-        while ((message = in.readLine()) != null) {
-            System.out.println("Admin received message: " + message);
-            if (message.startsWith("MESSAGE")) {
-                String finalMessage = message.substring(8);
-                Platform.runLater(() -> {
-                    messageList.getItems().add(finalMessage);
-                    messageList.scrollTo(messageList.getItems().size() - 1);
-                });
-            } else if (message.startsWith("PRIVATE")) {
-                String finalMessage = message.substring(8);
-                Platform.runLater(() -> {
-                    messageList.getItems().add("[PRIVATE] " + finalMessage);
-                    messageList.scrollTo(messageList.getItems().size() - 1);
-                });
-            }
-        }
-    }
-
     @FXML
-    private void handleSendMessage() {
-        String message = messageInput.getText().trim();
-        if (!message.isEmpty() && out != null) {
-            try {
-                out.println(message);
-                messageInput.clear();
-            } catch (Exception e) {
-                System.err.println("Error sending message: " + e.getMessage());
-            }
+    private void openChatBot() {
+        try {
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/com/example/airlinesmanagement1/ChatBot.fxml"));
+            javafx.scene.Scene scene = new javafx.scene.Scene(loader.load());
+            ChatBotController controller = loader.getController();
+            
+            // Set admin username
+            controller.setUsername("Admin");
+            
+            // Set previous scene for back navigation
+            controller.setPreviousScene(messageList.getScene());
+            
+            javafx.stage.Stage stage = new javafx.stage.Stage();
+            stage.setScene(scene);
+            stage.setTitle("Admin ChatBot Support");
+            stage.show();
+        } catch (IOException e) {
+            System.err.println("Error loading ChatBot.fxml: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -835,5 +781,19 @@ public class AdminPanelController {
     @FXML
     private void handleWindowClose() {
         cleanup();
+    }
+
+    @FXML
+    private void handleSendMessage(ActionEvent event) {
+        String message = messageInput.getText().trim();
+        if (!message.isEmpty()) {
+            // Add message to the list
+            messageList.getItems().add("Admin: " + message);
+            messageInput.clear();
+            
+            // TODO: Implement actual chat functionality
+            // For now, just display the message locally
+            System.out.println("Admin sent message: " + message);
+        }
     }
 }

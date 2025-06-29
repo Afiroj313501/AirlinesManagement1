@@ -70,10 +70,22 @@ public class ChatServer {
                         return;
                     }
                     synchronized (clients) {
-                        if (!clientName.isEmpty() && !clients.containsKey(clientName)) {
+                        // Special handling for admin - allow admin to connect even if name exists
+                        if (clientName.equals(ADMIN_NAME)) {
+                            // If admin already exists, remove the old connection
+                            if (clients.containsKey(ADMIN_NAME)) {
+                                System.out.println("Admin reconnecting, removing old connection");
+                                clients.remove(ADMIN_NAME);
+                            }
                             clients.put(clientName, out);
+                            System.out.println("Admin connected successfully");
+                            break;
+                        } else if (!clientName.isEmpty() && !clients.containsKey(clientName)) {
+                            clients.put(clientName, out);
+                            System.out.println("User " + clientName + " connected successfully");
                             break;
                         } else {
+                            System.out.println("Name " + clientName + " is already taken");
                             out.println("NAMETAKEN");
                         }
                     }
@@ -81,6 +93,7 @@ public class ChatServer {
 
                 out.println("NAMEACCEPTED " + clientName);
                 broadcastMessage("Server", clientName + " has joined the chat");
+                System.out.println("Broadcasted join message for " + clientName);
 
                 String message;
                 while ((message = in.readLine()) != null) {
@@ -112,6 +125,7 @@ public class ChatServer {
                         clients.remove(clientName);
                     }
                     broadcastMessage("Server", clientName + " has left the chat");
+                    System.out.println("Client " + clientName + " disconnected");
                 }
                 try {
                     socket.close();
@@ -160,7 +174,11 @@ public class ChatServer {
                     if (userList.length() > 0) {
                         userList.setLength(userList.length() - 1); // Remove the trailing comma
                     }
-                    adminWriter.println("USERLIST " + userList.toString());
+                    String userListStr = userList.toString();
+                    adminWriter.println("USERLIST " + userListStr);
+                    System.out.println("Sent user list to admin: " + userListStr);
+                } else {
+                    System.out.println("Admin writer not found when trying to send user list");
                 }
             }
         }

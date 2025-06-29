@@ -82,9 +82,16 @@ public class LoginController implements Initializable {
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next() && rs.getInt(1) == 1) {
+                    String username = usernameField.getText();
                     loginMessageLabel.setText("Congratulations! Login successful.");
-                    Session.getInstance().setUsername(usernameField.getText()); // Use Session instead of CurrentUser
-                    loadDashboard(event);
+                    Session.getInstance().setUsername(username);
+                    
+                    // Check if user is admin
+                    if ("admin".equalsIgnoreCase(username)) {
+                        loadAdminPanel(event);
+                    } else {
+                        loadDashboard(event);
+                    }
                 } else {
                     loginMessageLabel.setText("Invalid login. Please try again.");
                 }
@@ -109,6 +116,21 @@ public class LoginController implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
             loginMessageLabel.setText("Failed to load dashboard.");
+        }
+    }
+
+    // Loads the admin panel for admin users
+    private void loadAdminPanel(ActionEvent event) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Admin_panel.fxml"));
+            Scene scene = new Scene(fxmlLoader.load());
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(scene);
+            stage.setTitle("Admin Panel - Airlines Management");
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            loginMessageLabel.setText("Failed to load admin panel.");
         }
     }
 }

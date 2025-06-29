@@ -19,24 +19,54 @@ public class SeatSelectionController {
 
     @FXML
     private GridPane seatGrid;
+    
+    @FXML
+    private Label fromCityLabel;
+    
+    @FXML
+    private Label toCityLabel;
+    
+    @FXML
+    private Label dateLabel;
+    
+    @FXML
+    private Label priceLabel;
+    
+    @FXML
+    private Label seatCountLabel;
+    
+    @FXML
+    private Label totalPriceLabel;
+    
+    @FXML
+    private Button paymentButton;
 
     private int flightId;
     private int seatPrice = 0;
     private int selectedSeatCount = 0;
+    private String fromCity;
+    private String toCity;
+    private String flightDate;
 
     // Remove hardcoded default, rely on setCurrentUsername
     private String currentUsername;
 
-    private final Label seatCountLabel = new Label("Selected Seats: 0");
-    private final Label totalPriceLabel = new Label("Total: 0 BDT");
-    private final Button paymentButton = new Button("Proceed to Payment");
-
     private final Map<String, ToggleButton> selectedSeatButtons = new HashMap<>();
 
     public void setFlightInfo(String from, String to, String date) {
+        this.fromCity = from;
+        this.toCity = to;
+        this.flightDate = date;
         this.flightId = getFlightId(from, to, date);
+        
+        // Update flight info labels
+        fromCityLabel.setText(from);
+        toCityLabel.setText(to);
+        dateLabel.setText(date);
+        
         if (this.flightId > 0) {
             this.seatPrice = getSeatPrice(flightId);
+            priceLabel.setText("BDT " + seatPrice);
             initializeSeatsForFlight(flightId);
             loadSeats();
         } else {
@@ -105,9 +135,9 @@ public class SeatSelectionController {
 
     private void loadSeats() {
         seatGrid.getChildren().clear();
-        seatGrid.setHgap(15);
-        seatGrid.setVgap(15);
-        seatGrid.setPadding(new Insets(20));
+        seatGrid.setHgap(8);
+        seatGrid.setVgap(8);
+        seatGrid.setPadding(new Insets(10));
 
         String[] rows = {"A", "B", "C", "D", "E", "F", "G"};
         int cols = 4;
@@ -128,14 +158,30 @@ public class SeatSelectionController {
                     ResultSet rs = stmt.executeQuery();
 
                     ToggleButton seatBtn = new ToggleButton(seatNo);
-                    seatBtn.setPrefWidth(60);
-                    seatBtn.setPrefHeight(40);
+                    seatBtn.setPrefWidth(50);
+                    seatBtn.setPrefHeight(35);
+                    
+                    // Professional styling for seat buttons
+                    seatBtn.setStyle("-fx-background-color: #3498db; -fx-text-fill: #ffffff; -fx-font-weight: bold; -fx-background-radius: 4px; -fx-border-radius: 4px; -fx-font-size: 11px;");
 
                     if (rs.next() && "booked".equalsIgnoreCase(rs.getString("status"))) {
                         seatBtn.setDisable(true);
-                        seatBtn.setStyle("-fx-background-color: gray;");
+                        seatBtn.setStyle("-fx-background-color: #95a5a6; -fx-text-fill: #ffffff; -fx-font-weight: bold; -fx-background-radius: 4px; -fx-border-radius: 4px; -fx-font-size: 11px;");
                     } else {
                         seatBtn.setOnAction(e -> handleSeatToggle(seatNo, seatBtn));
+                        
+                        // Add hover effect
+                        seatBtn.setOnMouseEntered(e -> {
+                            if (!seatBtn.isSelected()) {
+                                seatBtn.setStyle("-fx-background-color: #2980b9; -fx-text-fill: #ffffff; -fx-font-weight: bold; -fx-background-radius: 4px; -fx-border-radius: 4px; -fx-font-size: 11px;");
+                            }
+                        });
+                        
+                        seatBtn.setOnMouseExited(e -> {
+                            if (!seatBtn.isSelected()) {
+                                seatBtn.setStyle("-fx-background-color: #3498db; -fx-text-fill: #ffffff; -fx-font-weight: bold; -fx-background-radius: 4px; -fx-border-radius: 4px; -fx-font-size: 11px;");
+                            }
+                        });
                     }
 
                     int visualCol = j - 1;
@@ -145,11 +191,9 @@ public class SeatSelectionController {
                 }
             }
 
-            // Add UI controls below the grid
-            seatGrid.add(seatCountLabel, 0, rows.length + 2, 2, 1);
-            seatGrid.add(totalPriceLabel, 2, rows.length + 2, 2, 1);
-            seatGrid.add(paymentButton, 0, rows.length + 3, 4, 1);
-
+            // Initialize labels
+            seatCountLabel.setText("0");
+            totalPriceLabel.setText("BDT 0");
             paymentButton.setDisable(true);
             paymentButton.setOnAction(e -> showPaymentOptions());
 
@@ -161,10 +205,10 @@ public class SeatSelectionController {
     private void handleSeatToggle(String seatNo, ToggleButton btn) {
         if (selectedSeatButtons.containsKey(seatNo)) {
             selectedSeatButtons.remove(seatNo);
-            btn.setStyle("");
+            btn.setStyle("-fx-background-color: #3498db; -fx-text-fill: #ffffff; -fx-font-weight: bold; -fx-background-radius: 4px; -fx-border-radius: 4px; -fx-font-size: 11px;");
         } else {
             selectedSeatButtons.put(seatNo, btn);
-            btn.setStyle("-fx-background-color: lightgreen;");
+            btn.setStyle("-fx-background-color: #27ae60; -fx-text-fill: #ffffff; -fx-font-weight: bold; -fx-background-radius: 4px; -fx-border-radius: 4px; -fx-font-size: 11px;");
         }
 
         selectedSeatCount = selectedSeatButtons.size();
@@ -173,8 +217,8 @@ public class SeatSelectionController {
     }
 
     private void updateSeatAndPriceDisplay() {
-        seatCountLabel.setText("Selected Seats: " + selectedSeatCount);
-        totalPriceLabel.setText("Total: " + (selectedSeatCount * seatPrice) + " BDT");
+        seatCountLabel.setText(String.valueOf(selectedSeatCount));
+        totalPriceLabel.setText("BDT " + (selectedSeatCount * seatPrice));
     }
 
     private void showPaymentOptions() {
@@ -220,45 +264,15 @@ public class SeatSelectionController {
     }
 
     private String getFlightFromCity() {
-        try (Connection conn = new DatabaseConnection().getConnection()) {
-            PreparedStatement stmt = conn.prepareStatement("SELECT from_city FROM flights WHERE flight_id = ?");
-            stmt.setInt(1, flightId);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return rs.getString("from_city");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return "";
+        return fromCity;
     }
 
     private String getFlightToCity() {
-        try (Connection conn = new DatabaseConnection().getConnection()) {
-            PreparedStatement stmt = conn.prepareStatement("SELECT to_city FROM flights WHERE flight_id = ?");
-            stmt.setInt(1, flightId);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return rs.getString("to_city");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return "";
+        return toCity;
     }
 
     private String getFlightDate() {
-        try (Connection conn = new DatabaseConnection().getConnection()) {
-            PreparedStatement stmt = conn.prepareStatement("SELECT flight_date FROM flights WHERE flight_id = ?");
-            stmt.setInt(1, flightId);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return rs.getString("flight_date");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return "";
+        return flightDate;
     }
 
     private void showAlert(AlertType type, String title, String content) {

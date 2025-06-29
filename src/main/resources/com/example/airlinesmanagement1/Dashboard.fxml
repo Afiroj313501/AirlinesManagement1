@@ -31,6 +31,7 @@
                   <Button onAction="#goToBookingHistory" text="🎫 My Tickets" style="-fx-background-color: rgba(255,255,255,0.1); -fx-text-fill: #ffffff; -fx-background-radius: 8px; -fx-padding: 12px 20px; -fx-min-width: 200px; -fx-cursor: hand;" />
                   <Button onAction="#goToSupport" text="💬 Support" style="-fx-background-color: rgba(255,255,255,0.1); -fx-text-fill: #ffffff; -fx-background-radius: 8px; -fx-padding: 12px 20px; -fx-min-width: 200px; -fx-cursor: hand;" />
                   <Button onAction="#goToSettings" text="⭐ Rating" style="-fx-background-color: rgba(255,255,255,0.1); -fx-text-fill: #ffffff; -fx-background-radius: 8px; -fx-padding: 12px 20px; -fx-min-width: 200px; -fx-cursor: hand;" />
+                  <Button fx:id="adminPanelButton" onAction="#goToAdminPanel" text="⚙️ Admin Panel" style="-fx-background-color: rgba(255,255,255,0.1); -fx-text-fill: #ffffff; -fx-background-radius: 8px; -fx-padding: 12px 20px; -fx-min-width: 200px; -fx-cursor: hand;" visible="false" />
                </children>
             </VBox>
             
@@ -171,7 +172,7 @@
                               <HBox spacing="15.0" alignment="CENTER">
                                  <children>
                                     <Button onAction="#goToManageBookings" text="Book New Flight" style="-fx-background-color: #3498db; -fx-text-fill: #ffffff; -fx-font-weight: bold; -fx-background-radius: 5px; -fx-padding: 10px 20px;" />
-                                    <Button onAction="#goToBookingHistory" text="View Tickets" style="-fx-background-color: #3498db; -fx-text-fill: #ffffff; -fx-font-weight: bold; -fx-background-radius: 5px; -fx-padding: 10px 20px;" />
+                                    <Button fx:id="ticketButton" onAction="#goToBookingHistory" text="View Tickets" style="-fx-background-color: #3498db; -fx-text-fill: #ffffff; -fx-font-weight: bold; -fx-background-radius: 5px; -fx-padding: 10px 20px;" />
                                     <Button onAction="#goToSupport" text="Get Support" style="-fx-background-color: #3498db; -fx-text-fill: #ffffff; -fx-font-weight: bold; -fx-background-radius: 5px; -fx-padding: 10px 20px;" />
                                     <Button onAction="#goToSettings" text="Rate Service" style="-fx-background-color: #3498db; -fx-text-fill: #ffffff; -fx-font-weight: bold; -fx-background-radius: 5px; -fx-padding: 10px 20px;" />
                                  </children>
@@ -197,7 +198,7 @@
 
    <!-- Professional Footer -->
    <bottom>
-      <HBox alignment="CENTER" prefHeight="50.0" style="-fx-background-color: #2c3e50;">
+      <HBox fx:id="footerBox" alignment="CENTER" prefHeight="50.0" style="-fx-background-color: #2c3e50;">
          <children>
             <Label text="✈️ Airlines Management System © 2025" style="-fx-text-fill: #ecf0f1; -fx-font-size: 12px;" />
             <Label text="|" style="-fx-text-fill: #ecf0f1; -fx-font-size: 12px;" />
