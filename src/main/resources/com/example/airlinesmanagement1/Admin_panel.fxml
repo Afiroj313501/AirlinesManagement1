@@ -141,9 +141,10 @@
                                 <Insets top="10" right="10" bottom="10" left="10"/>
                             </padding>
 
-                            <ListView fx:id="messageList" prefHeight="150" GridPane.rowIndex="0" GridPane.columnIndex="0" GridPane.columnSpan="2"/>
-                            <TextField fx:id="messageInput" promptText="Type a message..." GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                            <Button text="Send" onAction="#handleSendMessage" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                            <ListView fx:id="messageList" prefHeight="150" GridPane.rowIndex="0" GridPane.columnIndex="0" GridPane.columnSpan="3"/>
+                            <Button text="Connect to Chat" onAction="#openChatBot" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                            <TextField fx:id="messageInput" promptText="Type a message..." GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                            <Button text="Send" onAction="#handleSendMessage" GridPane.rowIndex="1" GridPane.columnIndex="2"/>
                         </GridPane>
                     </content>
                 </TitledPane>

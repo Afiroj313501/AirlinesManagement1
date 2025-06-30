@@ -189,24 +189,88 @@ public class AdminPanelController {
 
     @FXML
     private void openChatBot() {
+        // Instead of opening a new window, connect to chat server directly
+        connectToChatServer();
+    }
+
+    private void connectToChatServer() {
         try {
-            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/com/example/airlinesmanagement1/ChatBot.fxml"));
-            javafx.scene.Scene scene = new javafx.scene.Scene(loader.load());
-            ChatBotController controller = loader.getController();
-            
-            // Set admin username
-            controller.setUsername("Admin");
-            
-            // Set previous scene for back navigation
-            controller.setPreviousScene(messageList.getScene());
-            
-            javafx.stage.Stage stage = new javafx.stage.Stage();
-            stage.setScene(scene);
-            stage.setTitle("Admin ChatBot Support");
-            stage.show();
+            socket = new Socket("localhost", 5000);
+            out = new PrintWriter(socket.getOutputStream(), true);
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+            // Handle authentication
+            String response = in.readLine();
+            if ("AUTH_REQUEST".equals(response)) {
+                out.println("Admin");
+                response = in.readLine();
+                
+                if (response != null && response.startsWith("AUTH_SUCCESS")) {
+                    System.out.println("✅ Admin connected to chat server");
+                    messageList.getItems().add("🛩️ Connected to chat server as Admin");
+                    messageList.getItems().add("🛩️ You can now receive messages from users");
+                    
+                    // Start message receiving thread
+                    new Thread(this::receiveChatMessages).start();
+                } else if (response != null && response.startsWith("AUTH_FAILED")) {
+                    String error = response.substring(response.indexOf(":") + 1);
+                    messageList.getItems().add("❌ Authentication failed: " + error);
+                } else {
+                    messageList.getItems().add("❌ Unexpected server response: " + response);
+                }
+            } else {
+                messageList.getItems().add("❌ Server not responding properly");
+            }
         } catch (IOException e) {
-            System.err.println("Error loading ChatBot.fxml: " + e.getMessage());
-            e.printStackTrace();
+            messageList.getItems().add("❌ Failed to connect to chat server: " + e.getMessage());
+            messageList.getItems().add("💡 Make sure ChatBot server is running on port 5000");
+        }
+    }
+
+    private void receiveChatMessages() {
+        try {
+            String message;
+            while ((message = in.readLine()) != null) {
+                if (message.startsWith("MSG:")) {
+                    String[] parts = message.split(":", 3);
+                    if (parts.length >= 3) {
+                        String sender = parts[1];
+                        String content = parts[2];
+                        
+                        // Add message to the list on JavaFX thread
+                        Platform.runLater(() -> {
+                            String timestamp = new java.text.SimpleDateFormat("HH:mm").format(new java.util.Date());
+                            if ("SERVER".equals(sender)) {
+                                messageList.getItems().add(String.format("[%s] 🛩️ %s", timestamp, content));
+                            } else if (sender.startsWith("PRIVATE:")) {
+                                String actualSender = sender.substring(8);
+                                messageList.getItems().add(String.format("[%s] 🔒 %s: %s", timestamp, actualSender, content));
+                            } else {
+                                messageList.getItems().add(String.format("[%s] %s: %s", timestamp, sender, content));
+                            }
+                            // Auto-scroll to bottom
+                            messageList.scrollTo(messageList.getItems().size() - 1);
+                        });
+                    }
+                } else if (message.startsWith("USERLIST:")) {
+                    String userListStr = message.substring(9);
+                    Platform.runLater(() -> {
+                        messageList.getItems().add("👥 Connected users: " + userListStr);
+                        messageList.scrollTo(messageList.getItems().size() - 1);
+                    });
+                }
+            }
+        } catch (IOException e) {
+            Platform.runLater(() -> {
+                messageList.getItems().add("❌ Connection lost: " + e.getMessage());
+                messageList.scrollTo(messageList.getItems().size() - 1);
+            });
+        } finally {
+            // Connection closed
+            Platform.runLater(() -> {
+                messageList.getItems().add("🔌 Chat connection closed");
+                messageList.scrollTo(messageList.getItems().size() - 1);
+            });
         }
     }
 
@@ -787,13 +851,29 @@ public class AdminPanelController {
     private void handleSendMessage(ActionEvent event) {
         String message = messageInput.getText().trim();
         if (!message.isEmpty()) {
-            // Add message to the list
-            messageList.getItems().add("Admin: " + message);
-            messageInput.clear();
-            
-            // TODO: Implement actual chat functionality
-            // For now, just display the message locally
-            System.out.println("Admin sent message: " + message);
+            if (out != null && socket != null && !socket.isClosed()) {
+                try {
+                    // Send message to server
+                    out.println(message);
+                    
+                    // Add message to the list
+                    String timestamp = new java.text.SimpleDateFormat("HH:mm").format(new java.util.Date());
+                    messageList.getItems().add(String.format("[%s] Admin: %s", timestamp, message));
+                    messageInput.clear();
+                    
+                    // Auto-scroll to bottom
+                    messageList.scrollTo(messageList.getItems().size() - 1);
+                } catch (Exception e) {
+                    messageList.getItems().add("❌ Failed to send message: " + e.getMessage());
+                    messageList.scrollTo(messageList.getItems().size() - 1);
+                }
+            } else {
+                // Not connected to chat server
+                messageList.getItems().add("❌ Not connected to chat server");
+                messageList.getItems().add("💡 Click 'Connect to Chat' to start receiving messages");
+                messageInput.clear();
+                messageList.scrollTo(messageList.getItems().size() - 1);
+            }
         }
     }
 }
