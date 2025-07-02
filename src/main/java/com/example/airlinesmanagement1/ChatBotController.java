@@ -52,7 +52,7 @@ public class ChatBotController {
             }
         });
 
-        // Set up enter key handling
+        // Set up enter key han
         messageField.setOnAction(e -> sendMessage());
 
         // Set up send button
